@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#17324d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pelacak Armada Bell 412</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<style>
+:root{--bg:#eef1f4;--card:#fff;--ink:#14212e;--mut:#5d6b79;--line:#d5dce3;--navy:#17324d;--acc:#17324d;--ok:#1d7a4d;--okb:#e1f3e9;--soon:#9a5b00;--soonb:#fff0cf;--over:#b3261e;--overb:#fde4e1;--nbb:#e6ebf0}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1720;--card:#17222e;--ink:#e6ecf2;--mut:#93a2b1;--line:#2b3947;--navy:#0b2236;--acc:#4f8fcf;--ok:#5fd29a;--okb:#13392b;--soon:#f2b84b;--soonb:#40300d;--over:#ff8a80;--overb:#471a17;--nbb:#243242}}
+:root[data-theme="dark"]{--bg:#0f1720;--card:#17222e;--ink:#e6ecf2;--mut:#93a2b1;--line:#2b3947;--navy:#0b2236;--acc:#4f8fcf;--ok:#5fd29a;--okb:#13392b;--soon:#f2b84b;--soonb:#40300d;--over:#ff8a80;--overb:#471a17;--nbb:#243242}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+header{background:var(--navy);color:#fff;padding:16px}
+.wrap{max-width:1040px;margin:0 auto}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+h1{font:600 22px "IBM Plex Sans Condensed",sans-serif;margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:22px;margin-top:14px}
+.stat b{display:block;font:600 24px "IBM Plex Sans Condensed",sans-serif}
+.stat span{font-size:12px;color:#b9c9d9}
+select,input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:7px 9px;width:100%}
+header select{width:auto;min-width:150px;background:#fff;color:#14212e}
+button{font:inherit;font-weight:500;border-radius:4px;border:1px solid var(--acc);background:var(--acc);color:#fff;padding:7px 14px;cursor:pointer}
+button.sec{background:transparent;color:var(--acc)}
+header button{background:#f2b84b;border-color:#f2b84b;color:#14212e}
+button.sm{padding:3px 9px;font-size:13px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #e0a100;outline-offset:1px}
+nav{display:flex;gap:4px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--line);padding:0 8px}
+nav button{background:none;border:0;border-bottom:3px solid transparent;border-radius:0;color:var(--mut);padding:11px 14px;white-space:nowrap}
+nav button.on{color:var(--ink);border-bottom-color:#e0a100}
+main{padding:16px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tools input{max-width:240px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th{text-align:left;font-size:12px;color:var(--mut);font-weight:500;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td small{display:block;color:var(--mut);font-size:12px}
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.ok{background:var(--okb);color:var(--ok)}.soon{background:var(--soonb);color:var(--soon)}.over{background:var(--overb);color:var(--over)}.nb{background:var(--nbb);color:var(--mut)}
+.rem{white-space:nowrap}.rem.over{background:none;color:var(--over);font-weight:600}.rem.soon{background:none;color:var(--soon);font-weight:600}
+.wo{border-bottom:1px solid var(--line);padding:12px 0}
+.wo:last-child{border:0}
+.wo h3{margin:4px 0;font-size:15px}
+.wo p{margin:2px 0;font-size:14px}.wo p b{font-weight:500;color:var(--mut)}
+.meta{font-size:12px;color:var(--mut)}
+.note{font-size:12px;color:var(--mut);margin-top:12px}
+#banner{display:none;background:var(--soonb);color:var(--soon);padding:10px 16px;font-size:14px}
+dialog{border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);padding:18px;width:min(560px,94vw)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+#fB{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+#fB label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px}
+#fB .full{grid-column:1/-1}
+h2{font-size:16px;margin:0}
+td small a{color:var(--acc)}
+#lf label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px}
+#fB .full>span{font-size:12px;color:var(--mut)}
+.prow{display:grid;grid-template-columns:2fr 1.2fr 1.2fr .8fr auto;gap:6px;margin:4px 0 6px}
+.prow input{min-width:0}
+@media(max-width:520px){.prow{grid-template-columns:1fr 1fr}.prow input[data-p="n"]{grid-column:1/-1}}
+.pl{margin:2px 0 6px;padding-left:20px;font-size:14px}
+.photos{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.photos img{height:110px;border-radius:4px;border:1px solid var(--line)}
+.crs{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;font-size:13px}
+.crs img{display:block;height:48px;background:#fff;margin-top:4px;border-radius:3px}
+#sigc{width:100%;max-width:480px;height:auto;background:#fff;border:1px solid var(--line);border-radius:4px;touch-action:none;display:block;margin-bottom:6px}
+@media(max-width:520px){#fB{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="top">
+<h1>Pelacak Armada Bell 412</h1>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><select id="sel" aria-label="Pilih pesawat"></select><button id="newWo">Buat laporan kerja</button><button id="logout" type="button">Keluar</button></div>
+</div>
+<div class="stats">
+<div class="stat"><b id="sHrs">0</b><span>Jam terbang</span></div>
+<div class="stat"><b id="sH1">0</b><span>Jam mesin 1</span></div>
+<div class="stat"><b id="sH2">0</b><span>Jam mesin 2</span></div>
+<div class="stat"><b id="sCyc">0</b><span>Pendaratan</span></div>
+<div class="stat"><b id="sE1">0</b><span>Siklus mesin 1</span></div>
+<div class="stat"><b id="sE2">0</b><span>Siklus mesin 2</span></div>
+<div class="stat"><b id="sEx">0</b><span>Beban eksternal</span></div>
+<div class="stat"><b id="sOver">0</b><span>Lewat batas</span></div>
+<div class="stat"><b id="sSoon">0</b><span>Segera jatuh tempo</span></div>
+<div class="stat"><b id="sRm">0</b><span>Remark pilot terbuka</span></div>
+</div></div></header>
+<div id="banner"></div>
+<nav class="wrap" id="tabs">
+<button data-tab="fleet">Armada</button><button data-tab="remark">Remark pilot</button><button data-tab="spk">SPK</button><button data-tab="wo">Laporan kerja</button><button data-tab="tasks">Jadwal inspeksi</button><button data-tab="dir">AD / SB</button><button data-tab="parts">Ringkasan part</button>
+</nav>
+<main class="wrap"><section class="panel" id="view"></section>
+<p class="note">Data awal hanyalah contoh. Sesuaikan semua interval dengan BHT-412-MM, AD, SB, dan program perawatan yang disetujui DGCA. Hak menulis ditentukan oleh siapa yang diberi akses Editor ke Google Spreadsheet data.</p></main>
+
+<dialog id="ldlg"><div id="lf"><h2>Masuk ke Pelacak Armada</h2><div id="gsec"><p style="margin:10px 0">Masuk dengan akun Google Anda. Setiap input dan perubahan data dicatat atas nama akun ini.</p><div id="gbtn" style="min-height:44px;margin:12px 0"></div></div><form id="nf" style="display:none"><p style="margin:10px 0">Isi nama Anda. Nama ini dicatat sebagai pelapor pada setiap input.</p><label style="display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px;margin-bottom:10px">Nama Anda<input id="nName" required autocomplete="name" maxlength="60"></label><button type="submit">Masuk</button></form><p id="lErr" role="alert" style="color:var(--over);margin:0 0 8px"></p></div></dialog>
+<dialog id="cdlg"><p id="cMsg" style="margin-top:0"></p><div style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="sec" id="cNo">Batal</button><button type="button" id="cYes">Ya</button></div></dialog>
+<dialog id="dlg"><form id="tf">
+<h2 id="fT"></h2><div id="fB"></div>
+<p id="fErr" role="alert" style="color:var(--over);margin:0 0 8px"></p>
+<div style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="sec" id="fX">Batal</button><button type="submit">Simpan</button></div>
+</form></dialog>
+
+<script src="https://accounts.google.com/gsi/client" async defer onload="window.gisReady=true;window.initGis&&window.initGis()"></script>
+<script src="config.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const T=()=>new Date().toISOString().slice(0,10);
+const addD=(s,n)=>{const d=new Date(s);d.setDate(d.getDate()+n);return d};
+const days=s=>Math.ceil((new Date(s)-new Date(T()))/864e5);
+let db=null,assets=null,dls=null,me="",D={ac:[],tasks:[],dir:[],wo:[],spk:[],remark:[]},cur=null,tab="fleet",fSave=null,q="";
+const CU={cyc:"Pendaratan",ce1:"Siklus mesin 1",ce2:"Siklus mesin 2",cx:"Siklus beban eksternal"},CUU={cyc:"pendaratan",ce1:"siklus mesin 1",ce2:"siklus mesin 2",cx:"siklus beban ext."};
+const HU={hrs:"Airframe",eh1:"Mesin 1",eh2:"Mesin 2"},hKey=l=>Object.keys(HU).find(k=>HU[k]===l)||"hrs",n2=v=>(+v||0).toFixed(2);
+const cuKey=l=>Object.keys(CU).find(k=>CU[k]===l)||"cyc";
+const LBL={ok:"Aman",soon:"Segera",over:"Lewat batas",nb:"Terbuka"};
+const A=()=>D.ac.find(a=>a.id===cur)||D.ac[0];
+const banner=m=>{$("banner").textContent=m;$("banner").style.display="block"};
+
+function calc(t,a){
+  const r=[];
+  if(+t.ih){const u=t.hu||"hrs";r.push({u:u==="hrs"?"jam":"jam "+HU[u].toLowerCase(),v:+(t.lh+t.ih-(a[u]||0)).toFixed(2),th:Math.max(t.ih*.1,5)})}
+  if(+t.id_)r.push({u:"hari",v:days(addD(t.ld,t.id_)),th:30});
+  if(+t.ic){const u=t.cu||"cyc";r.push({u:CUU[u]||"siklus",v:t.lc+t.ic-(a[u]||0),th:Math.max(t.ic*.1,10)})}
+  let st="ok",score=1e9;
+  r.forEach(x=>{x.cls=x.v<0?"over":x.v<=x.th?"soon":"";if(x.v<0)st="over";else if(x.cls&&st!=="over")st="soon";score=Math.min(score,x.v/x.th)});
+  return{r,st,score};
+}
+function dcalc(d,a){
+  if(d.status==="Selesai")return{st:"ok",txt:"Selesai "+(d.doneDate||"")};
+  const p=[];let st="nb";
+  if(d.dueDate){const v=days(d.dueDate);p.push(v+" hari");if(v<0)st="over";else if(v<=30&&st!=="over")st="soon"}
+  if(+d.dueHrs){const v=+(d.dueHrs-a.hrs).toFixed(2);p.push(v+" jam");if(v<0)st="over";else if(v<=10&&st!=="over")st="soon"}
+  return{st,txt:p.join(" / ")||"Tanpa batas"};
+}
+function counts(a){
+  let o=0,s=0;
+  D.tasks.filter(t=>t.acId===a.id).forEach(t=>{const c=calc(t,a).st;if(c==="over")o++;if(c==="soon")s++});
+  D.dir.filter(d=>d.acId===a.id).forEach(d=>{const c=dcalc(d,a).st;if(c==="over")o++;if(c==="soon")s++});
+  return{o,s};
+}
+
+function openForm(title,fields,save){
+  $("fT").textContent=title;$("fErr").textContent="";
+  $("fB").innerHTML=fields.map(f=>{
+    const id="f_"+f.k,v=f.v??"";
+    if(f.t==="parts")return `<div class="full"><span>${f.l}</span><div id="partRows"></div><button type="button" class="sec sm" id="partAdd">TAMBAH</button></div>`;
+    if(f.t==="sig")return `<div class="full"><span>${f.l}</span><canvas id="sigc" width="480" height="160" aria-label="Area tanda tangan"></canvas><button type="button" class="sec sm" id="sigx">Hapus tanda tangan</button></div>`;
+    if(f.t==="attach")return `<label class="full">${f.l}<input id="${id}" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.txt,.csv"></label>`;
+    if(f.t==="file")return `<label class="full">${f.l}<input id="${id}" type="file" accept="image/*" multiple></label>`;
+    const c=f.t==="select"?`<select id="${id}">${f.o.map(o=>`<option ${o===v?"selected":""}>${esc(o)}</option>`).join("")}</select>`
+      :f.t==="area"?`<textarea id="${id}" rows="3" ${f.req?"required":""}>${esc(v)}</textarea>`
+      :`<input id="${id}" type="${f.t||"text"}" value="${esc(v)}" ${f.step?`step="${f.step}"`:""} ${f.req?"required":""}>`;
+    return `<label class="${f.full?"full":""}">${f.l}${c}</label>`}).join("");
+  fSave=()=>{const o={};fields.forEach(f=>{let v;
+    if(f.t==="parts")v=collectParts();
+    else if(f.t==="sig"){const c=$("sigc");v=c.dataset.dirty?c.toDataURL("image/png"):""}
+    else if(f.t==="file"||f.t==="attach")v=[...$("f_"+f.k).files];
+    else{v=$("f_"+f.k).value;if(f.t==="number")v=v===""?(f.blank?"":0):+v}
+    o[f.k]=v});return save(o)};
+  $("dlg").showModal();initSig();initParts();
+}
+const partRow=(v={})=>`<div class="prow"><input data-p="n" placeholder="Nama part / material" aria-label="Nama part" value="${esc(v.n||"")}"><input data-p="pn" placeholder="P/N" aria-label="Part number" value="${esc(v.pn||"")}"><input data-p="sn" placeholder="S/N" aria-label="Serial number" value="${esc(v.sn||"")}"><input data-p="q" type="number" min="1" step="1" placeholder="Jumlah" aria-label="Jumlah" value="${esc(v.q||1)}"><button type="button" class="sm sec" data-pdel>Hapus</button></div>`;
+function initParts(){
+  const b=$("partRows");if(!b)return;
+  b.innerHTML=partRow();
+  $("partAdd").onclick=()=>{b.insertAdjacentHTML("beforeend",partRow());b.lastElementChild.querySelector("input").focus()};
+  b.onclick=e=>{const d=e.target.closest("[data-pdel]");if(!d)return;const r=d.closest(".prow");
+    if(b.children.length>1)r.remove();else r.querySelectorAll("input").forEach(i=>{i.value=i.dataset.p==="q"?1:""})};
+}
+function collectParts(){
+  return [...document.querySelectorAll("#partRows .prow")].map(r=>{
+    const g=k=>r.querySelector(`[data-p="${k}"]`).value.trim().replace(/\s*\|\s*/g,"/");
+    return[g("n"),g("pn"),g("sn"),g("q")||"1"]}).filter(x=>x[0]||x[1]||x[2]).map(x=>x.join(" | ")).join("\n");
+}
+function parseParts(s){
+  return String(s||"").split("\n").filter(x=>x.trim()).map(l=>{
+    const o=l.match(/^\s*P\/N:\s*(.*?)\s*\|\s*S\/N:\s*(.*?)\s*\|\s*Jml:\s*(.*?)\s*$/),c=v=>v==="-"?"":v;
+    if(o)return{n:"",pn:c(o[1]),sn:c(o[2]),q:o[3]};
+    const p=l.split(/\s*\|\s*/);
+    return p.length===4?{n:p[0],pn:p[1],sn:p[2],q:p[3]}:{n:l.trim(),pn:"",sn:"",q:""}});
+}
+function partsTbl(s){
+  const r=parseParts(s);if(!r.length)return"";
+  return `<div class="tbl"><table style="min-width:0"><thead><tr><th>Part / material</th><th>P/N</th><th>S/N</th><th>Jml</th></tr></thead><tbody>${r.map(x=>`<tr><td>${esc(x.n)||"-"}</td><td>${esc(x.pn)||"-"}</td><td>${esc(x.sn)||"-"}</td><td>${esc(x.q)||"-"}</td></tr>`).join("")}</tbody></table></div>`;
+}
+function initSig(){
+  const c=$("sigc");if(!c)return;
+  const x=c.getContext("2d");x.lineWidth=2.5;x.lineCap="round";x.strokeStyle="#000";x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);
+  let d=false;const p=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
+  c.onpointerdown=e=>{d=true;c.setPointerCapture(e.pointerId);x.beginPath();x.moveTo(...p(e))};
+  c.onpointermove=e=>{if(!d)return;x.lineTo(...p(e));x.stroke();c.dataset.dirty="1"};
+  c.onpointerup=()=>{d=false};
+  $("sigx").onclick=()=>{x.fillRect(0,0,c.width,c.height);c.dataset.dirty=""};
+}
+async function shrink(file){
+  const bm=await createImageBitmap(file),s=Math.min(1,1280/Math.max(bm.width,bm.height));
+  const c=document.createElement("canvas");c.width=Math.round(bm.width*s);c.height=Math.round(bm.height*s);
+  c.getContext("2d").drawImage(bm,0,0,c.width,c.height);
+  return new Promise(r=>c.toBlob(r,"image/jpeg",.8));
+}
+$("tf").onsubmit=async e=>{e.preventDefault();if(!db)return;try{await fSave();$("dlg").close()}catch(err){$("fErr").textContent="Gagal menyimpan: "+(err.message||"coba lagi. Pastikan Anda punya akses Editor ke Spreadsheet data.")}};
+$("fX").onclick=()=>$("dlg").close();
+
+// Alamat server dibaca dari file config.js (satu baris, mudah dibuat dari HP)
+const API_URL=(window.APP_CONFIG&&window.APP_CONFIG.apiUrl)||"";
+const CLIENT_ID=(window.APP_CONFIG&&window.APP_CONFIG.clientId)||"";
+const MODE=(window.APP_CONFIG&&window.APP_CONFIG.loginMode)||((CLIENT_ID&&CLIENT_ID.indexOf("GANTI")<0)?"google":"nama");
+let AUTH={token:""},ROLE="";
+const gs=async(fn,...a)=>{
+  if(!API_URL||API_URL.indexOf("GANTI")>=0)throw new Error("Alamat server belum diisi. Buat atau ubah file config.js di GitHub dan isi apiUrl dengan Web app URL.");
+  for(let t=0;t<2;t++){
+    const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({fn:fn,args:[AUTH,...a]})});
+    let j;try{j=await r.json()}catch(e){throw new Error("Server tidak merespons dengan benar. Periksa API_URL dan pastikan deployment diatur ke Anyone.")}
+    if(j.ok)return j.data;
+    if(j.error==="SESI_HABIS"&&t===0&&MODE!=="nama"){await reauth();continue}
+    throw new Error(j.error==="SESI_HABIS"?(MODE==="nama"?"Masuk tanpa kode belum diaktifkan admin. Tambahkan Script property OPEN_ACCESS = true di Apps Script.":"Sesi berakhir. Silakan masuk lagi dengan akun Google."):j.error);
+  }
+};
+const col=c=>({
+  add:async o=>{const id=await gs("api_write","add",c,null,o);await refresh();return{id}},
+  doc:id=>({
+    update:async o=>{await gs("api_write","update",c,id,o);await refresh()},
+    inc:async o=>{await gs("api_write","inc",c,id,o);await refresh()},
+    delete:async()=>{await gs("api_write","delete",c,id,null);await refresh()}
+  })
+});
+const ask=m=>new Promise(r=>{const d=$("cdlg");$("cMsg").textContent=m;d.oncancel=()=>r(false);$("cYes").onclick=()=>{d.close();r(true)};$("cNo").onclick=()=>{d.close();r(false)};d.showModal()});
+const sampleTasks=[["Inspeksi 100 jam / 12 bulan","MM Bab 5",100,365],["Inspeksi 300 jam","MM Bab 5",300,0],["Inspeksi 600 jam","MM Bab 5",600,0],["Baterai ELT","MM Bab 5",0,730],["Pemeriksaan fire extinguisher","MM Bab 26",0,365]];
+
+const acFields=a=>[{k:"reg",l:"Registrasi",v:a?.reg,req:1},{k:"sn",l:"Serial number",v:a?.sn},{k:"type",l:"Tipe",t:"select",o:["412","412EP","412EPI"],v:a?.type},{k:"hrs",l:"Total jam (FH)",t:"number",step:"0.01",v:a?.hrs??0},{k:"eh1",l:"Total jam mesin 1",t:"number",step:"0.01",v:a?.eh1??0},{k:"eh2",l:"Total jam mesin 2",t:"number",step:"0.01",v:a?.eh2??0},{k:"cyc",l:"Total pendaratan",t:"number",v:a?.cyc??0},{k:"ce1",l:"Siklus mesin 1",t:"number",v:a?.ce1??0},{k:"ce2",l:"Siklus mesin 2",t:"number",v:a?.ce2??0},{k:"cx",l:"Siklus beban eksternal",t:"number",v:a?.cx??0}];
+function taskFields(t,a){return[{k:"name",l:"Nama tugas",v:t?.name,req:1,full:1},{k:"ref",l:"Referensi (MM / AD / SB)",v:t?.ref,full:1},{k:"hu",l:"Penghitung jam yang dipakai",t:"select",o:Object.values(HU),v:HU[t?.hu||"hrs"]},{k:"ih",l:"Interval jam",t:"number",step:"0.01",v:t?.ih||""},{k:"id_",l:"Interval hari",t:"number",v:t?.id_||""},{k:"ic",l:"Interval siklus",t:"number",v:t?.ic||""},{k:"cu",l:"Penghitung siklus yang dipakai",t:"select",o:Object.values(CU),v:CU[t?.cu||"cyc"]},{k:"lh",l:"Terakhir pada jam",t:"number",step:"0.01",v:t?.lh??a.hrs},{k:"ld",l:"Terakhir pada tanggal",t:"date",v:t?.ld||T()},{k:"lc",l:"Terakhir pada siklus",t:"number",v:t?.lc??a.cyc}]}
+function dirFields(d){return[{k:"kind",l:"Jenis",t:"select",o:["AD","SB"],v:d?.kind},{k:"no",l:"Nomor",v:d?.no,req:1},{k:"title",l:"Judul / subjek",v:d?.title,req:1,full:1},{k:"dueDate",l:"Batas tanggal",t:"date",v:d?.dueDate||""},{k:"dueHrs",l:"Batas jam pesawat",t:"number",step:"0.01",v:d?.dueHrs||""},{k:"status",l:"Status",t:"select",o:["Terbuka","Selesai"],v:d?.status||"Terbuka"},{k:"doneDate",l:"Tanggal selesai",t:"date",v:d?.doneDate||""},{k:"note",l:"Catatan kepatuhan",t:"area",v:d?.note,full:1}]}
+
+function newReport(spkId,rm){
+  const a=A();if(!a){tab="fleet";render();banner("Tambahkan pesawat dulu di tab Armada.");return}
+  const ts=D.tasks.filter(t=>t.acId===a.id);
+  openForm("Laporan kerja: "+a.reg,[
+    {k:"date",l:"Tanggal",t:"date",v:T(),req:1},
+    {k:"type",l:"Jenis pekerjaan",t:"select",o:["Troubleshooting","Perbaikan","Inspeksi terjadwal","Penggantian komponen","Lainnya"],v:"Troubleshooting"},
+    {k:"spk",l:"Dasar: Nomor SPK",t:"select",o:["(tanpa SPK)",...D.spk.filter(x=>x.acId===a.id&&["Diterbitkan","Dikerjakan"].includes(x.status)).map(x=>x.no)],v:(D.spk.find(x=>x.id===spkId)||{}).no||"(tanpa SPK)",full:1},
+    {k:"title",l:"Judul singkat",req:1,full:1,v:rm?rm.text.slice(0,80):""},
+    {k:"ata",l:"Sistem / ATA chapter",v:""},
+    {k:"hrs",l:"Jam pesawat saat ini",t:"number",step:"0.01",v:a.hrs},
+    {k:"finding",l:"Temuan / keluhan",t:"area",req:1,full:1,v:rm?"Keluhan pilot ("+(rm.pilot||"-")+"): "+rm.text:""},
+    {k:"action",l:"Tindakan yang dilakukan",t:"area",req:1,full:1},
+    ...(assets?[{k:"photos",l:"Foto temuan (maks. 4)",t:"file"}]:[]),
+    {k:"parts",l:"Part / material",t:"parts",full:1},
+    {k:"by",l:"Nama personel (tanda tangan)",v:me,req:1},
+    {k:"link",l:"Selesaikan tugas terjadwal",t:"select",o:["(tidak ada)",...ts.map(t=>t.name)],v:"(tidak ada)"}
+  ],async o=>{
+    const t=ts.find(x=>x.name===o.link);delete o.link;
+    const files=(o.photos||[]).slice(0,4);o.photos=[];
+    for(const f of files){const r=await assets.upload(await shrink(f),a.id);o.photos.push(r.id)}
+    const sp=D.spk.find(x=>x.acId===a.id&&x.no===o.spk);delete o.spk;
+    if(sp){o.spkId=sp.id;o.spkNo=sp.no}
+    await col("wo").add({...o,acId:a.id,ts:Date.now()});
+    if(sp&&sp.status==="Diterbitkan")await col("spk").doc(sp.id).update({status:"Dikerjakan"});
+    if(rm&&rm.status==="Baru")await col("remark").doc(rm.id).update({status:"Dalam proses"});
+    if(t)await col("tasks").doc(t.id).update({lh:a[t.hu||"hrs"]||0,lc:a[t.cu||"cyc"],ld:o.date});
+  });
+}
+$("newWo").onclick=()=>newReport();
+$("sel").onchange=e=>{cur=e.target.value;render()};
+$("tabs").onclick=e=>{const b=e.target.closest("button");if(b){tab=b.dataset.tab;q="";render()}};
+
+const row=(cells)=>`<tr>${cells.map(c=>`<td>${c}</td>`).join("")}</tr>`;
+const btn=(act,id,t,sec=1)=>`<button class="sm ${sec?"sec":""}" data-act="${act}" data-id="${id}">${t}</button>`;
+const RMC={"Baru":"over","Dalam proses":"soon","Selesai":"ok"};
+const COND=["Serviceable","Serviceable dengan pembatasan","Dalam perawatan","Unserviceable / AOG"],CONDC=["ok","soon","soon","over"];
+function condCell(a){
+  if(!a.cond)return `<span class="badge nb">Belum diisi</span>`;
+  return `<span class="badge ${CONDC[COND.indexOf(a.cond)]||"nb"}">${esc(a.cond)}</span>${a.remark?`<small>${esc(a.remark)}</small>`:""}<small>${esc(a.condBy||"")}${a.condDate?", "+esc(a.condDate):""}</small>`;
+}
+function rmCell(a){
+  const o=D.remark.filter(x=>x.acId===a.id&&x.status!=="Selesai").sort((x,y)=>(y.date+y.ts>x.date+x.ts)?1:-1);
+  if(!o.length)return"-";
+  const t=o[0].text.length>70?o[0].text.slice(0,70)+"...":o[0].text;
+  return `<span class="badge ${o.some(x=>x.status==="Baru")?"over":"soon"}">${o.length} terbuka</span> ${btn("rmOpen",a.id,"Lihat")}<small>${esc(o[0].date)}: ${esc(t)}</small>`;
+}
+const views={
+  fleet(){
+    const r=D.ac.map(a=>{const c=counts(a);return row([`<b>${esc(a.reg)}</b><small>${esc(a.type)} ${esc(a.sn?"S/N "+a.sn:"")}</small>`,condCell(a),n2(a.hrs)+" jam<small>Mesin 1: "+n2(a.eh1)+" | Mesin 2: "+n2(a.eh2)+"</small>",a.cyc+" / "+(a.ce1||0)+" / "+(a.ce2||0)+" / "+(a.cx||0),c.o?`<span class="badge over">${c.o} lewat</span>`:"-",c.s?`<span class="badge soon">${c.s} segera</span>`:"-",rmCell(a),btn("open",a.id,"Buka",0)+" "+btn("flight",a.id,"Tambah jam")+" "+btn("cond",a.id,"Kondisi")+" "+btn("editAc",a.id,"Ubah")])}).join("");
+    return `<div class="tools"><button data-act="addAc">Tambah pesawat</button></div><div class="tbl"><table><thead><tr><th>Pesawat</th><th>Kondisi / Remark</th><th>Jam terbang / mesin</th><th>Pendaratan / Mesin 1 / Mesin 2 / Beban ext.</th><th>Lewat batas</th><th>Segera</th><th>Remark pilot</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="8">Belum ada pesawat. Pilih Tambah pesawat untuk memulai.</td></tr>`}</tbody></table></div>`},
+  tasks(a){
+    if(!a)return"<p>Tambahkan pesawat dulu.</p>";
+    const items=D.tasks.filter(t=>t.acId===a.id).map(t=>({t,c:calc(t,a)})).sort((x,y)=>x.c.score-y.c.score);
+    const r=items.map(({t,c})=>{
+      const iv=[t.ih&&t.ih+" jam"+((t.hu||"hrs")==="hrs"?"":" ("+HU[t.hu]+")"),t.id_&&t.id_+" hari",t.ic&&t.ic+" "+(CUU[t.cu||"cyc"]||"siklus")].filter(Boolean).join(" / ")||"-";
+      return row([`${esc(t.name)}<small>${esc(t.ref)}</small>`,iv,c.r.map(x=>`<div class="rem ${x.cls}">${x.v} ${x.u}</div>`).join("")||"-",`<span class="badge ${c.st}">${LBL[c.st]}</span>`,btn("done",t.id,"Selesai",0)+" "+btn("editT",t.id,"Ubah")+" "+btn("delT",t.id,"Hapus")])}).join("");
+    return `<div class="tools"><button data-act="addT">Tambah tugas</button>${items.length?"":`<button class="sec" data-act="seedT">Isi tugas contoh</button>`}</div><div class="tbl"><table><thead><tr><th>Tugas</th><th>Interval</th><th>Sisa</th><th>Status</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="5">Belum ada tugas untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`},
+  dir(a){
+    if(!a)return"<p>Tambahkan pesawat dulu.</p>";
+    const r=D.dir.filter(d=>d.acId===a.id).map(d=>({d,c:dcalc(d,a)})).sort((x,y)=>(x.c.st==="ok")-(y.c.st==="ok")).map(({d,c})=>
+      row([`<b>${esc(d.kind)} ${esc(d.no)}</b>`,esc(d.title)+(d.note?`<small>${esc(d.note)}</small>`:""),`<span class="${c.st==="over"?"rem over":c.st==="soon"?"rem soon":""}">${esc(c.txt)}</span>`,`<span class="badge ${c.st}">${LBL[c.st]}</span>`,(d.status==="Selesai"?"":btn("doneD",d.id,"Selesai",0)+" ")+btn("editD",d.id,"Ubah")+" "+btn("delD",d.id,"Hapus")])).join("");
+    return `<div class="tools"><button data-act="addD">Tambah AD / SB</button></div><div class="tbl"><table><thead><tr><th>Nomor</th><th>Subjek</th><th>Batas</th><th>Status</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="5">Belum ada AD atau SB untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`},
+  wo(a){
+    if(!a)return"<p>Tambahkan pesawat dulu.</p>";
+    const list=woList(a);
+    const r=list.map(w=>`<div class="wo"><div class="meta">${esc(w.date)} | ${esc(w.type)} | ${esc(w.hrs)} jam${w.ata?" | ATA "+esc(w.ata):""}</div><h3>${esc(w.title)}</h3>${w.spkNo?`<p><b>SPK:</b> ${esc(w.spkNo)}</p>`:""}<p><b>Temuan:</b> ${esc(w.finding)}</p><p><b>Tindakan:</b> ${esc(w.action)}</p>${partsTbl(w.parts)}${(w.photos||[]).length?`<div class="photos">${w.photos.map(i=>`<img data-pid="${esc(i)}" alt="Foto temuan">`).join("")}</div>`:""}<div class="meta">Dilaporkan oleh ${esc(w.by)}</div>${w.crs?`<div class="crs"><span class="badge ok">CRS diterbitkan</span> oleh ${esc(w.crs.by)} (${esc(w.crs.lic)}) pada ${esc(w.crs.date)}<br>${esc(w.crs.stmt)}${w.crs.note?"<br>"+esc(w.crs.note):""}${w.crs.sig?`<img data-pid="${esc(w.crs.sig)}" alt="Tanda tangan CRS">`:""}</div>`:""}<div class="tools" style="margin:8px 0 0">${w.crs?"":btn("crs",w.id,"Terbitkan CRS",0)} ${btn("pdf",w.id,"Unduh PDF")}</div></div>`).join("");
+    return `<div class="tools"><button data-act="newWo">Buat laporan kerja</button><button class="sec" data-act="pdfAll">Ekspor semua ke PDF</button><input id="q" type="search" placeholder="Cari laporan" aria-label="Cari laporan" value="${esc(q)}"></div>${r||"<p>Belum ada laporan kerja untuk "+esc(a.reg)+". Personel lapangan bisa membuatnya lewat tombol di atas.</p>"}`}
+};
+
+const SPKT=["Inspeksi terjadwal","Troubleshooting","Perbaikan","Penggantian komponen","Kepatuhan AD/SB","Lainnya"];
+function spkSt(x){
+  if(x.status==="Selesai")return["ok","Selesai"];
+  if(x.status==="Dibatalkan")return["nb","Dibatalkan"];
+  if(x.due&&days(x.due)<0)return["over","Lewat target"];
+  return x.status==="Dikerjakan"?["soon","Dikerjakan"]:["nb","Diterbitkan"];
+}
+function spkFields(x,a){
+  const n=D.spk.filter(y=>y.acId===a.id).length+1;
+  return[
+    {k:"no",l:"Nomor SPK",v:x?.no||`SPK/${String(n).padStart(3,"0")}/${a.reg}/${new Date().getFullYear()}`,req:1,full:1},
+    {k:"date",l:"Tanggal terbit",t:"date",v:x?.date||T(),req:1},
+    {k:"due",l:"Target selesai",t:"date",v:x?.due||""},
+    {k:"type",l:"Jenis pekerjaan",t:"select",o:SPKT,v:x?.type},
+    {k:"assignee",l:"Pelaksana (nama / unit)",v:x?.assignee,req:1},
+    {k:"basis",l:"Dasar pelaksanaan (AD/SB, task MM, hasil inspeksi, permintaan operasi)",t:"area",v:x?.basis,req:1,full:1},
+    {k:"scope",l:"Uraian pekerjaan",t:"area",v:x?.scope,req:1,full:1},
+    {k:"issuer",l:"Pemberi perintah",v:x?.issuer||me,req:1},
+    {k:"issuerTitle",l:"Jabatan",v:x?.issuerTitle,req:1},
+    {k:"files",l:"Lampiran file (opsional; maks. 5 file, masing-masing 5 MB)",t:"attach"},
+    {k:"sig",l:x?"Tanda tangan baru (kosongkan untuk tetap memakai yang lama)":"Tanda tangan pemberi perintah (opsional)",t:"sig"}
+  ];
+}
+views.spk=function(a){
+  if(!a)return"<p>Tambahkan pesawat dulu.</p>";
+  const r=D.spk.filter(x=>x.acId===a.id).sort((x,y)=>(y.date+y.ts>x.date+x.ts)?1:-1).map(x=>{
+    const[c,t]=spkSt(x),n=D.wo.filter(w=>w.spkId===x.id).length,open=["Diterbitkan","Dikerjakan"].includes(x.status);
+    return row([`<b>${esc(x.no)}</b><small>${esc(x.date)}</small>`,`${esc(x.type)}<small>${esc(x.scope)}</small><small>Dasar: ${esc(x.basis)}</small>${filesLinks(x)}`,esc(x.assignee),x.due?esc(x.due):"-",`<span class="badge ${c}">${t}</span><small>${n} laporan</small>`,
+      (open?btn("woSpk",x.id,"Buat laporan",0)+" ":"")+(x.status==="Diterbitkan"?btn("startSpk",x.id,"Mulai")+" "+btn("editSpk",x.id,"Ubah")+" ":"")+(x.status==="Dikerjakan"?btn("closeSpk",x.id,"Tutup SPK")+" ":"")+(open?btn("cancelSpk",x.id,"Batalkan")+" ":"")+btn("attSpk",x.id,"Lampiran")+" "+btn("pdfSpk",x.id,"PDF")])}).join("");
+  return `<div class="tools"><button data-act="addSpk">Terbitkan SPK</button></div><div class="tbl"><table><thead><tr><th>Nomor</th><th>Pekerjaan dan dasar</th><th>Pelaksana</th><th>Target</th><th>Status</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="6">Belum ada SPK untuk ${esc(a.reg)}. SPK menjadi dasar pelaksanaan setiap laporan kerja.</td></tr>`}</tbody></table></div>`};
+
+let pScope="all";
+views.remark=function(a){
+  if(!a)return"<p>Tambahkan pesawat dulu.</p>";
+  const l=D.remark.filter(x=>x.acId===a.id).sort((x,y)=>((x.status==="Selesai")-(y.status==="Selesai"))||((y.date+y.ts>x.date+x.ts)?1:-1));
+  const r=l.map(x=>row([esc(x.date)+`<small>${n2(x.hrs)} jam</small>`,esc(x.pilot||"-"),esc(x.text),`<span class="badge ${RMC[x.status]||"nb"}">${esc(x.status)}</span>`,x.act?esc(x.act)+(x.closedDate?`<small>Ditutup ${esc(x.closedDate)}</small>`:""):"-",
+    x.status!=="Selesai"?btn("woRm",x.id,"Buat laporan",0)+" "+(x.status==="Baru"?btn("procRm",x.id,"Proses")+" ":"")+btn("closeRm",x.id,"Selesai"):""])).join("");
+  return `<div class="tools"><button data-act="addRm">Tambah remark pilot</button></div><div class="tbl"><table><thead><tr><th>Tanggal</th><th>Pilot</th><th>Remark / keluhan</th><th>Status</th><th>Tindak lanjut</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="6">Belum ada remark pilot untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`};
+views.parts=function(a){
+  const regOf=id=>(D.ac.find(x=>x.id===id)||{}).reg||"?";
+  const g={};
+  D.wo.filter(w=>pScope==="all"||(a&&w.acId===a.id)).forEach(w=>parseParts(w.parts).forEach(x=>{
+    const pn=(x.pn||"").trim(),nm=(x.n||"").trim(),k=pn?pn.toUpperCase():"NAMA:"+nm.toUpperCase();
+    if(!pn&&!nm)return;
+    const r=g[k]=g[k]||{pn:pn,n:"",q:0,c:0,regs:new Set(),last:""};
+    r.q+=+x.q||1;r.c++;r.regs.add(regOf(w.acId));if(nm&&!r.n)r.n=nm;if(w.date>r.last)r.last=w.date}));
+  const rows=Object.values(g).sort((x,y)=>y.q-x.q||y.c-x.c).map(r=>row([`<b>${esc(r.pn||"(tanpa P/N)")}</b>`,esc(r.n)||"-",r.q,r.c,esc([...r.regs].join(", ")),esc(r.last)])).join("");
+  return `<div class="tools"><label style="display:flex;gap:8px;align-items:center">Cakupan <select id="pScope" style="width:auto"><option value="all" ${pScope==="all"?"selected":""}>Semua pesawat</option><option value="ac" ${pScope==="ac"?"selected":""}>Pesawat terpilih</option></select></label></div><div class="tbl"><table><thead><tr><th>P/N</th><th>Nama part</th><th>Total jumlah</th><th>Kali dipakai</th><th>Pesawat</th><th>Terakhir</th></tr></thead><tbody>${rows||`<tr><td colspan="6">Belum ada part yang tercatat di laporan kerja.</td></tr>`}</tbody></table></div><p class="note">Diurutkan dari yang paling banyak dipakai. Part tanpa P/N dikelompokkan berdasarkan nama.</p>`;
+};
+
+$("view").addEventListener("change",e=>{if(e.target.id==="pScope"){pScope=e.target.value;render()}});
+const parseFiles=s=>String(s||"").split("\n").filter(x=>x.trim()).map(l=>{const i=l.indexOf(" | ");return i<0?{id:l.trim(),name:l.trim()}:{id:l.slice(0,i).trim(),name:l.slice(i+3).trim()}});
+async function upFiles(list,cur){
+  const items=parseFiles(cur),fl=[...(list||[])].slice(0,5);
+  for(const f of fl){
+    if(f.size>5*1024*1024)throw new Error(`File "${f.name}" lebih dari 5 MB.`);
+    const id=await gs("api_uploadFile",(await blobData(f)).split(",")[1],f.type||"application/octet-stream",f.name,(A()||{}).id);
+    items.push({id,name:f.name.replace(/[|\n]/g,"_")});
+  }
+  return items.map(x=>x.id+" | "+x.name).join("\n");
+}
+const filesLinks=x=>{const f=parseFiles(x.files);return f.length?`<small>Lampiran: ${f.map(y=>`<a href="#" data-act="dlFile" data-id="${esc(y.id)}" data-nm="${esc(y.name)}">${esc(y.name)}</a> <a href="#" data-act="delFile" data-id="${esc(x.id)}" data-fid="${esc(y.id)}" aria-label="Hapus lampiran ${esc(y.name)}">&times;</a>`).join("; ")}</small>`:""};
+function offerFile(name,b64,mime){
+  const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0)),url=URL.createObjectURL(new Blob([bytes],{type:mime||"application/octet-stream"}));
+  $("banner").innerHTML=`File siap: <a href="${url}" download="${esc(name)}" target="_blank" rel="noopener">${esc(name)}</a> (klik untuk mengunduh)`;$("banner").style.display="block";
+}
+function woList(a){return D.wo.filter(w=>w.acId===a.id&&(w.title+w.finding+w.action+(w.parts||"")+(w.ata||"")+w.by).toLowerCase().includes(q)).sort((x,y)=>(y.date+y.ts>x.date+x.ts)?1:-1)}
+const blobData=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
+async function makePdf(kind,payload){
+  try{banner("Membuat PDF...");const r=await gs("api_pdf",kind,payload);
+    const bytes=Uint8Array.from(atob(r.data),c=>c.charCodeAt(0)),url=URL.createObjectURL(new Blob([bytes],{type:"application/pdf"}));
+    $("banner").innerHTML=`PDF siap: <a href="${url}" download="${esc(r.name)}" target="_blank" rel="noopener">${esc(r.name)}</a> (klik untuk mengunduh)`}
+  catch(e){banner("Gagal membuat PDF: "+(e.message||e))}
+}
+const pdf=(list,a)=>list.length?makePdf("wo",{acId:a.id,ids:list.map(w=>w.id)}):banner("Belum ada laporan untuk diekspor.");
+const pdfSpk=(x,a)=>makePdf("spk",{id:x.id});
+
+function render(){
+  const a=A();
+  $("sel").innerHTML=D.ac.map(x=>`<option value="${x.id}" ${a&&a.id===x.id?"selected":""}>${esc(x.reg)}</option>`).join("")||"<option>Belum ada pesawat</option>";
+  $("sHrs").textContent=a?(+a.hrs).toFixed(2):"0";$("sCyc").textContent=a?a.cyc:"0";$("sH1").textContent=n2(a&&a.eh1);$("sH2").textContent=n2(a&&a.eh2);$("sE1").textContent=a?(a.ce1||0):"0";$("sE2").textContent=a?(a.ce2||0):"0";$("sEx").textContent=a?(a.cx||0):"0";
+  const c=a?counts(a):{o:0,s:0};$("sOver").textContent=c.o;$("sSoon").textContent=c.s;$("sRm").textContent=a?D.remark.filter(x=>x.acId===a.id&&x.status!=="Selesai").length:0;
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
+  const act=document.activeElement&&document.activeElement.id==="q";
+  $("view").innerHTML=views[tab](a);loadPhotos();
+  if(act){const i=$("q");i.focus();i.setSelectionRange(q.length,q.length)}
+}
+$("view").oninput=e=>{if(e.target.id==="q"){q=e.target.value.toLowerCase();render()}};
+
+$("view").onclick=async e=>{
+  const b=e.target.closest("[data-act]");if(!b||!db)return;e.preventDefault();
+  const act=b.dataset.act,id=b.dataset.id,a=A();
+  const f=(c,i)=>D[c].find(x=>x.id===i);
+  try{
+  if(act==="newWo")newReport();
+  else if(act==="addSpk")openForm("Terbitkan SPK: "+a.reg,spkFields(null,a),async o=>{o.files=await upFiles(o.files,"");await col("spk").add({...o,acId:a.id,status:"Diterbitkan",ts:Date.now()})});
+  else if(act==="editSpk")openForm("Ubah SPK",spkFields(f("spk",id),a),async o=>{if(!o.sig)delete o.sig;o.files=await upFiles(o.files,f("spk",id).files);return col("spk").doc(id).update(o)});
+  else if(act==="startSpk")await col("spk").doc(id).update({status:"Dikerjakan"});
+  else if(act==="closeSpk"){const x=f("spk",id),n=D.wo.filter(w=>w.spkId===id).length;if(await ask(`Tutup SPK ${x.no}? Laporan terkait: ${n}.`))await col("spk").doc(id).update({status:"Selesai",closedDate:T()})}
+  else if(act==="cancelSpk"){if(await ask("Batalkan SPK ini?"))await col("spk").doc(id).update({status:"Dibatalkan"})}
+  else if(act==="rmOpen"){cur=id;tab="remark";render()}
+  else if(act==="addRm")openForm("Remark pilot: "+a.reg,[{k:"date",l:"Tanggal",t:"date",v:T(),req:1},{k:"pilot",l:"Nama pilot",req:1},{k:"hrs",l:"Jam pesawat saat ini",t:"number",step:"0.01",v:a.hrs},{k:"text",l:"Remark / keluhan pilot",t:"area",req:1,full:1}],o=>col("remark").add({...o,acId:a.id,status:"Baru",act:"",closedDate:"",by:me,ts:Date.now()}));
+  else if(act==="procRm")await col("remark").doc(id).update({status:"Dalam proses"});
+  else if(act==="closeRm")openForm("Tutup remark",[{k:"act",l:"Tindak lanjut yang dilakukan",t:"area",req:1,full:1}],o=>col("remark").doc(id).update({status:"Selesai",act:o.act,closedDate:T()}));
+  else if(act==="woRm")newReport(null,f("remark",id));
+  else if(act==="woSpk")newReport(id);
+  else if(act==="dlFile"){banner("Mengambil file...");const r=await gs("api_getFile",id);offerFile(b.dataset.nm||r.name,r.data,r.mime)}
+  else if(act==="delFile"){if(await ask("Hapus lampiran ini dari SPK? File asli tetap tersimpan di Drive.")){const x=f("spk",id);await col("spk").doc(id).update({files:parseFiles(x.files).filter(y=>y.id!==b.dataset.fid).map(y=>y.id+" | "+y.name).join("\n")})}}
+  else if(act==="attSpk"){const x=f("spk",id);openForm("Tambah lampiran: "+x.no,[{k:"files",l:"File lampiran (maks. 5 file, masing-masing 5 MB)",t:"attach"}],async o=>col("spk").doc(id).update({files:await upFiles(o.files,x.files)}))}
+  else if(act==="pdfSpk")await pdfSpk(f("spk",id),a);
+  else if(act==="pdf")await pdf([f("wo",id)],a);
+  else if(act==="pdfAll")await pdf(woList(a),a);
+  else if(act==="crs"){const w=f("wo",id);openForm("Terbitkan CRS: "+w.title,[
+    {k:"by",l:"Nama certifying staff",v:me,req:1},
+    {k:"lic",l:"No. lisensi / otorisasi",req:1},
+    {k:"stmt",l:"Pernyataan",t:"select",o:["Pekerjaan selesai sesuai data perawatan yang disetujui. Pesawat laik untuk kembali beroperasi.","Pekerjaan selesai dengan pembatasan atau defect tertunda (lihat catatan)."],full:1},
+    {k:"note",l:"Catatan (opsional)",t:"area",full:1},
+    {k:"sig",l:"Tanda tangan (gambar dengan jari atau mouse)",t:"sig"}
+  ],async o=>{if(!o.sig)throw new Error("Tanda tangan wajib diisi.");await col("wo").doc(id).update({crs:{...o,date:T(),ts:Date.now()}})})}
+  else if(act==="open"){cur=id;tab="wo";render()}
+  else if(act==="cond"){const x=f("ac",id);openForm("Kondisi pesawat: "+x.reg,[{k:"cond",l:"Kondisi",t:"select",o:COND,v:x.cond||COND[0],full:1},{k:"remark",l:"Remark kondisi pesawat",t:"area",v:x.remark||"",full:1}],o=>col("ac").doc(id).update({...o,condDate:T(),condBy:me}))}
+  else if(act==="addAc")openForm("Pesawat baru",acFields(),async o=>{const r=await col("ac").add(o);cur=r.id});
+  else if(act==="editAc")openForm("Ubah pesawat",acFields(f("ac",id)),o=>col("ac").doc(id).update(o));
+  else if(act==="flight"){const x=f("ac",id);openForm("Tambah jam: "+x.reg,[
+    {k:"h",l:"Jam terbang (airframe)",t:"number",step:"0.01",v:""},
+    {k:"h1",l:"Jam mesin 1 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
+    {k:"h2",l:"Jam mesin 2 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
+    {k:"l",l:"Pendaratan",t:"number",v:""},{k:"e1",l:"Siklus mesin 1",t:"number",v:""},{k:"e2",l:"Siklus mesin 2",t:"number",v:""},{k:"x",l:"Siklus beban eksternal",t:"number",v:""}
+  ],o=>col("ac").doc(id).inc({hrs:o.h,eh1:o.h1===""?o.h:o.h1,eh2:o.h2===""?o.h:o.h2,cyc:o.l,ce1:o.e1,ce2:o.e2,cx:o.x}))}
+  else if(act==="addT")openForm("Tugas baru",taskFields(null,a),o=>col("tasks").add({...o,cu:cuKey(o.cu),hu:hKey(o.hu),acId:a.id}));
+  else if(act==="editT")openForm("Ubah tugas",taskFields(f("tasks",id),a),o=>col("tasks").doc(id).update({...o,cu:cuKey(o.cu),hu:hKey(o.hu)}));
+  else if(act==="delT"){if(await ask("Hapus tugas ini?"))await col("tasks").doc(id).delete()}
+  else if(act==="done"){const t=f("tasks",id);if(await ask(`Tandai "${t.name}" selesai hari ini (jam ${n2(a[t.hu||"hrs"])})?`))await col("tasks").doc(id).update({lh:a[t.hu||"hrs"]||0,lc:a[t.cu||"cyc"],ld:T()})}
+  else if(act==="seedT"){for(const s of sampleTasks)await col("tasks").add({acId:a.id,name:s[0],ref:s[1],ih:s[2],id_:s[3],ic:0,lh:a.hrs,ld:T(),lc:a.cyc})}
+  else if(act==="addD")openForm("AD / SB baru",dirFields(),o=>col("dir").add({...o,acId:a.id}));
+  else if(act==="editD")openForm("Ubah AD / SB",dirFields(f("dir",id)),o=>col("dir").doc(id).update(o));
+  else if(act==="doneD")await col("dir").doc(id).update({status:"Selesai",doneDate:T()});
+  else if(act==="delD"){if(await ask("Hapus AD / SB ini?"))await col("dir").doc(id).delete()}
+  }catch(err){banner("Gagal: "+(err.message||err.code||"akses ditolak. Anda butuh akses minimal Contributor."))}
+};
+
+async function refresh(){
+  try{const r=await gs("api_getAll");["ac","tasks","dir","wo","spk","remark"].forEach(c=>D[c]=r[c]);if(!me)me=r.me.name;render()}
+  catch(e){banner("Gagal memuat data: "+(e.message||e))}
+}
+const photoCache={};
+function loadPhotos(){
+  document.querySelectorAll("img[data-pid]:not([src])").forEach(i=>{const id=i.dataset.pid;
+    if(photoCache[id])i.src=photoCache[id];
+    else gs("api_getPhoto",id).then(u=>{photoCache[id]=u;i.src=u}).catch(()=>{i.alt="Foto tidak dapat dimuat"})});
+}
+db=true;
+assets={upload:async(b,acId)=>({id:await gs("api_uploadPhoto",(await blobData(b)).split(",")[1],"image/jpeg",acId)})};
+let waiter=null;
+async function startSession(){
+  try{
+    const r=await gs("api_getAll");
+    ["ac","tasks","dir","wo","spk","remark"].forEach(c=>D[c]=r[c]);
+    me=r.me.name;ROLE=r.me.role;
+    $("logout").textContent="Keluar ("+(r.me.name||r.me.email)+")";
+    $("lErr").textContent="";$("ldlg").close();render();
+    if(ROLE==="Viewer")banner("Anda masuk sebagai Viewer (hanya dapat membaca).");
+  }catch(e){
+    AUTH={token:""};$("lErr").textContent=e.message||"Gagal masuk.";if(!$("ldlg").open)$("ldlg").showModal();
+  }
+}
+function onCred(resp){
+  AUTH={token:resp.credential};
+  if(waiter){const w=waiter;waiter=null;w.ok();return}
+  $("lErr").textContent="Memeriksa akun...";startSession();
+}
+function reauth(){
+  return new Promise((ok,no)=>{
+    waiter={ok,no};google.accounts.id.prompt();
+    setTimeout(()=>{if(waiter){waiter=null;AUTH={token:""};$("ldlg").showModal();no(new Error("Sesi berakhir. Silakan masuk lagi dengan akun Google."))}},10000);
+  });
+}
+window.initGis=()=>{
+  if(MODE==="nama")return;
+  if(!CLIENT_ID||CLIENT_ID.indexOf("GANTI")>=0){$("lErr").textContent="Client ID Google belum diisi di config.js.";$("ldlg").showModal();return}
+  google.accounts.id.initialize({client_id:CLIENT_ID,callback:onCred,auto_select:true,cancel_on_tap_outside:false});
+  google.accounts.id.renderButton($("gbtn"),{theme:"outline",size:"large",text:"signin_with",locale:"id"});
+  if(!AUTH.token){$("ldlg").showModal();google.accounts.id.prompt()}
+};
+$("ldlg").oncancel=e=>e.preventDefault();
+$("logout").onclick=()=>{try{google.accounts.id.disableAutoSelect()}catch(e){}try{localStorage.removeItem("bell412-nama")}catch(e){}AUTH={token:""};location.reload()};
+function initNama(){
+  $("gsec").style.display="none";$("nf").style.display="block";
+  let saved="";try{saved=localStorage.getItem("bell412-nama")||""}catch(e){}
+  $("nName").value=saved;
+  if(saved){AUTH={name:saved};startSession()}else $("ldlg").showModal();
+}
+$("nf").onsubmit=e=>{e.preventDefault();const n=$("nName").value.trim();if(!n)return;
+  try{localStorage.setItem("bell412-nama",n)}catch(x){}
+  AUTH={name:n};$("lErr").textContent="Memeriksa...";startSession()};
+render();
+if(MODE==="nama")initNama();else if(window.gisReady)window.initGis();
+setInterval(()=>{if((AUTH.token||AUTH.name)&&!$("dlg").open&&!$("cdlg").open)refresh()},20000);
+</script>
+</body>
+</html>
