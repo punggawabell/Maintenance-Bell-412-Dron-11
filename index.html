@@ -59,6 +59,20 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 #fB .full{grid-column:1/-1}
 h2{font-size:16px;margin:0}
 td small a{color:var(--acc)}
+td small,.wo p{white-space:pre-line}
+@media(max-width:720px){
+  #view>.tbl{overflow-x:visible}
+  #view>.tbl>table{min-width:0;display:block}
+  #view>.tbl>table thead{display:none}
+  #view>.tbl>table tbody{display:block}
+  #view>.tbl>table tr{display:block;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:12px;background:var(--card)}
+  #view>.tbl>table td{display:block;border:0;border-bottom:1px solid var(--line);padding:7px 0}
+  #view>.tbl>table td:last-child{border-bottom:0}
+  #view>.tbl>table td:last-child:not([data-l]){display:flex;flex-wrap:wrap;gap:6px;padding-top:10px}
+  #view>.tbl>table td[data-l]::before{content:attr(data-l);display:block;color:var(--mut);font-size:12px;margin-bottom:2px}
+  #view>.tbl>table td:first-child{font-size:17px;padding-top:2px}
+  #view>.tbl>table td:first-child::before{display:none}
+}
 #lf label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px}
 #fB .full>span{font-size:12px;color:var(--mut)}
 .prow{display:grid;grid-template-columns:2fr 1.2fr 1.2fr .8fr auto;gap:6px;margin:4px 0 6px}
@@ -285,7 +299,7 @@ function rmCell(a){
 }
 const views={
   fleet(){
-    const r=D.ac.map(a=>{const c=counts(a);return row([`<b>${esc(a.reg)}</b><small>${esc(a.type)} ${esc(a.sn?"S/N "+a.sn:"")}</small>`,condCell(a),n2(a.hrs)+" jam<small>Mesin 1: "+n2(a.eh1)+" | Mesin 2: "+n2(a.eh2)+"</small>",a.cyc+" / "+(a.ce1||0)+" / "+(a.ce2||0)+" / "+(a.cx||0),c.o?`<span class="badge over">${c.o} lewat</span>`:"-",c.s?`<span class="badge soon">${c.s} segera</span>`:"-",rmCell(a),btn("open",a.id,"Buka",0)+" "+btn("flight",a.id,"Tambah jam")+" "+btn("cond",a.id,"Kondisi")+" "+btn("editAc",a.id,"Ubah")])}).join("");
+    const r=D.ac.map(a=>{const c=counts(a);return row([`<b>${esc(a.reg)}</b><small>${esc(a.type)} ${esc(a.sn?"S/N "+a.sn:"")}</small>`,condCell(a),n2(a.hrs)+" jam<small>Mesin 1: "+n2(a.eh1)+" | Mesin 2: "+n2(a.eh2)+"</small>",a.cyc+" / "+(a.ce1||0)+" / "+(a.ce2||0)+" / "+(a.cx||0),c.o?`<span class="badge over">${c.o} lewat</span>`:"-",c.s?`<span class="badge soon">${c.s} segera</span>`:"-",rmCell(a),btn("open",a.id,"Buka",0)+" "+btn("flight",a.id,"Tambah jam")+" "+btn("cond",a.id,"Kondisi")+" "+btn("editAc",a.id,"Ubah")+" "+btn("pdfAc",a.id,"Simpan PDF")])}).join("");
     return `<div class="tools"><button data-act="addAc">Tambah pesawat</button></div><div class="tbl"><table><thead><tr><th>Pesawat</th><th>Kondisi / Remark</th><th>Jam terbang / mesin</th><th>Pendaratan / Mesin 1 / Mesin 2 / Beban ext.</th><th>Lewat batas</th><th>Segera</th><th>Remark pilot</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="8">Belum ada pesawat. Pilih Tambah pesawat untuk memulai.</td></tr>`}</tbody></table></div>`},
   tasks(a){
     if(!a)return"<p>Tambahkan pesawat dulu.</p>";
@@ -372,6 +386,22 @@ function offerFile(name,b64,mime){
   const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0)),url=URL.createObjectURL(new Blob([bytes],{type:mime||"application/octet-stream"}));
   $("banner").innerHTML=`File siap: <a href="${url}" download="${esc(name)}" target="_blank" rel="noopener">${esc(name)}</a> (klik untuk mengunduh)`;$("banner").style.display="block";
 }
+function labelCells(){
+  document.querySelectorAll("#view>.tbl>table").forEach(t=>{
+    const hd=[...t.querySelectorAll("thead th")].map(x=>x.textContent.trim());
+    t.querySelectorAll("tbody tr").forEach(tr=>[...tr.children].forEach((td,i)=>{if(hd[i]&&td.colSpan<2)td.dataset.l=hd[i]}));
+  });
+}
+function acSummary(a){
+  const tasks=D.tasks.filter(t=>t.acId===a.id).map(t=>({t,c:calc(t,a)})).sort((x,y)=>x.c.score-y.c.score)
+    .map(({t,c})=>[t.name+(t.ref?" ("+t.ref+")":""),c.r.map(x=>x.v+" "+x.u).join("; ")||"-",LBL[c.st]]);
+  const dirs=D.dir.filter(d=>d.acId===a.id).map(d=>({d,c:dcalc(d,a)})).sort((x,y)=>(x.c.st==="ok")-(y.c.st==="ok"))
+    .map(({d,c})=>[d.kind+" "+d.no+" - "+d.title,c.txt,LBL[c.st]]);
+  const remarks=D.remark.filter(x=>x.acId===a.id&&x.status!=="Selesai").sort((x,y)=>(y.date+y.ts>x.date+x.ts)?1:-1).map(x=>[x.date,x.text,x.status]);
+  const spks=D.spk.filter(x=>x.acId===a.id&&["Diterbitkan","Dikerjakan"].includes(x.status)).map(x=>[x.no,x.type+": "+x.scope,spkSt(x)[1]]);
+  const wos=D.wo.filter(w=>w.acId===a.id).sort((x,y)=>(y.date+y.ts>x.date+x.ts)?1:-1).slice(0,10).map(w=>[w.date,w.type,w.title]);
+  return{acId:a.id,tasks,dirs,remarks,spks,wos};
+}
 function woList(a){return D.wo.filter(w=>w.acId===a.id&&(w.title+w.finding+w.action+(w.parts||"")+(w.ata||"")+w.by).toLowerCase().includes(q)).sort((x,y)=>(y.date+y.ts>x.date+x.ts)?1:-1)}
 const blobData=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
 async function makePdf(kind,payload){
@@ -390,7 +420,7 @@ function render(){
   const c=a?counts(a):{o:0,s:0};$("sOver").textContent=c.o;$("sSoon").textContent=c.s;$("sRm").textContent=a?D.remark.filter(x=>x.acId===a.id&&x.status!=="Selesai").length:0;
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   const act=document.activeElement&&document.activeElement.id==="q";
-  $("view").innerHTML=views[tab](a);loadPhotos();
+  $("view").innerHTML=views[tab](a);labelCells();loadPhotos();
   if(act){const i=$("q");i.focus();i.setSelectionRange(q.length,q.length)}
 }
 $("view").oninput=e=>{if(e.target.id==="q"){q=e.target.value.toLowerCase();render()}};
@@ -415,6 +445,7 @@ $("view").onclick=async e=>{
   else if(act==="dlFile"){banner("Mengambil file...");const r=await gs("api_getFile",id);offerFile(b.dataset.nm||r.name,r.data,r.mime)}
   else if(act==="delFile"){if(await ask("Hapus lampiran ini dari SPK? File asli tetap tersimpan di Drive.")){const x=f("spk",id);await col("spk").doc(id).update({files:parseFiles(x.files).filter(y=>y.id!==b.dataset.fid).map(y=>y.id+" | "+y.name).join("\n")})}}
   else if(act==="attSpk"){const x=f("spk",id);openForm("Tambah lampiran: "+x.no,[{k:"files",l:"File lampiran (maks. 5 file, masing-masing 5 MB)",t:"attach"}],async o=>col("spk").doc(id).update({files:await upFiles(o.files,x.files)}))}
+  else if(act==="pdfAc")await makePdf("ac",acSummary(f("ac",id)));
   else if(act==="pdfSpk")await pdfSpk(f("spk",id),a);
   else if(act==="pdf")await pdf([f("wo",id)],a);
   else if(act==="pdfAll")await pdf(woList(a),a);
