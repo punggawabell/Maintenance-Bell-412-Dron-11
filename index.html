@@ -480,7 +480,7 @@ views.comp=function(a){
     const lim=k.it.map(x=>`<div class="rem ${x.cls}">${esc(x.l)}: ${x.v} ${x.u}</div>`).join("")||"-";
     const link=/^https?:\/\//.test(c.link||"")?`<small><a href="${esc(c.link)}" target="_blank" rel="noopener">Buka tautan Drive</a></small>`:"";
     return `<tr class="${k.st==="over"?"hl-over":k.st==="soon"?"hl-soon":""}"><td><b>${esc(c.name)}</b><small>${esc(c.pos||"")}</small></td><td>${esc(c.pn||"-")}<small>S/N ${esc(c.sn||"-")}</small></td><td>TSN ${n2(k.tsn)}<small>TSO ${n2(k.tso)}</small><small>CSN ${k.csn}</small></td><td>${lim}</td><td><span class="badge ${k.st==="out"?"nb":k.st}">${k.st==="out"?"Dilepas":LBL[k.st]}</span></td><td>${filesLinks(c,"comp")}${link}${c.note?`<small>${esc(c.note)}</small>`:""}</td><td>${btn("editC",c.id,"Ubah")} ${btn("attC",c.id,"Referensi")} ${btn("delC",c.id,"Hapus")}</td></tr>`}).join("");
-  return `<div class="tools"><button data-act="addC">Tambah komponen</button><button class="sec" data-act="impDrive">Impor dari Drive (COMREC)</button><button class="sec" data-act="impXlsx">Impor file Excel</button><input id="cq" type="search" placeholder="Cari komponen, P/N, S/N" aria-label="Cari komponen" value="${esc(cq)}"><select id="cthr" aria-label="Ambang peringatan" style="max-width:230px">${[5,10,20,30].map(p=>`<option value="${p}" ${p===cthr?"selected":""}>Sorot jika sisa ≤ ${p}%</option>`).join("")}</select></div>
+  return `<div class="tools"><button data-act="addC">Tambah komponen</button><button class="sec" data-act="impDrive">Impor dari Drive (COMREC)</button><button class="sec" data-act="impXlsx">Impor file Excel</button><button class="sec" data-act="expPdfC">Ekspor PDF</button><button class="sec" data-act="expXlsC">Ekspor Excel</button><input id="cq" type="search" placeholder="Cari komponen, P/N, S/N" aria-label="Cari komponen" value="${esc(cq)}"><select id="cthr" aria-label="Ambang peringatan" style="max-width:230px">${[5,10,20,30].map(p=>`<option value="${p}" ${p===cthr?"selected":""}>Sorot jika sisa ≤ ${p}%</option>`).join("")}</select></div>
 <div class="seg">${chip("","Semua",all.length)}${chip("over","Lewat batas",cnt("over"))}${chip("soon","Mendekati batas",cnt("soon"))}${chip("ok","Aman",cnt("ok"))}${chip("out","Dilepas",cnt("out"))}</div>
 <div class="tbl"><table><thead><tr><th>Komponen</th><th>P/N / S/N</th><th>Umur saat ini</th><th>Batas dan sisa</th><th>Status</th><th>Referensi</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="7">${all.length?"Tidak ada komponen yang cocok dengan filter.":"Belum ada catatan komponen untuk "+esc(a.reg)+"."}</td></tr>`}</tbody></table></div>
 <p class="note">Baris kuning: sisa umur sudah di bawah ambang. Baris merah: sudah melewati batas. TSN dan TSO dihitung dari umur saat dipasang ditambah pemakaian sejak dipasang pada penghitung yang dipilih. Selalu cocokkan dengan catatan resmi dan manual komponen.</p>`;
@@ -603,6 +603,67 @@ $("comrecFile").onchange=async e=>{
   finally{setBusy(false)}
 };
 
+const COMPST={ok:"Aman",soon:"Mendekati batas",over:"Lewat batas",out:"Dilepas"};
+function compList(a){
+  return D.comp.filter(c=>c.acId===a.id).map(c=>({c,k:ccalc(c,a)}))
+    .filter(x=>(!cflt||x.k.st===cflt)&&(!cq||[x.c.name,x.c.pos,x.c.pn,x.c.sn,x.c.note].join(" ").toLowerCase().includes(cq)))
+    .sort((x,y)=>x.k.score-y.k.score);
+}
+const compFilterText=()=>[cflt?COMPST[cflt]:"Semua",cq?'cari "'+cq+'"':"",`ambang ${cthr}%`].filter(Boolean).join(", ");
+function compExportData(a){
+  const L=compList(a);
+  const head=["No","Komponen","Posisi","P/N","S/N","Status","Tgl dipasang","A/C jam saat dipasang","TSN (jam)","TSO (jam)","CSN (siklus)","TBO (jam)","Life limit (jam)","Life limit (siklus)","Batas kalender","SI (jam)","Sisa terkecil (jam)","Batas dan sisa","Catatan"];
+  const rows=L.map(({c,k},i)=>{const hr=k.it.filter(y=>y.u==="jam").map(y=>y.v);
+    return[i+1,c.name||"",c.pos||"",c.pn||"",c.sn||"",COMPST[k.st],c.iDate||"",+c.iHr||0,+k.tsn.toFixed(2),+k.tso.toFixed(2),k.csn,+c.tbo||0,+c.life||0,+c.lifeC||0,c.calDate||"",+c.si||0,hr.length?Math.min(...hr):"",k.it.map(y=>y.l+": "+y.v+" "+y.u).join("; "),c.note||""]});
+  return{head,rows,st:L.map(x=>x.k.st),filter:compFilterText()};
+}
+function compPdfData(a){
+  const L=compList(a);
+  return{acId:a.id,filter:compFilterText(),st:L.map(x=>x.k.st),
+    head:["No","Komponen / posisi","P/N","S/N","Umur saat ini","Batas dan sisa","Status","Catatan"],
+    rows:L.map(({c,k},i)=>[i+1,(c.name||"")+(c.pos?"\n"+c.pos:""),c.pn||"",c.sn||"","TSN "+n2(k.tsn)+"\nTSO "+n2(k.tso)+"\nCSN "+k.csn,k.it.map(y=>y.l+": "+y.v+" "+y.u).join("\n")||"-",COMPST[k.st],c.note||""])};
+}
+function loadXlsx(){
+  return new Promise((ok,no)=>{
+    if(window.XLSX&&window.XLSX.version)return ok();
+    const s=document.createElement("script");
+    s.src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js";
+    s.onload=()=>window.XLSX?ok():no(new Error("Pustaka Excel tidak lengkap"));
+    s.onerror=()=>no(new Error("Gagal memuat pustaka Excel"));
+    document.head.appendChild(s);
+  });
+}
+async function compExcel(a){
+  const d=compExportData(a);
+  if(!d.rows.length){banner("Tidak ada komponen untuk diekspor.");return}
+  const name=`COMREC-${a.reg}-${T()}`;
+  banner("Menyiapkan Excel...");
+  try{
+    await loadXlsx();
+    const X=window.XLSX,top=[["COMPONENT RECORD (COMREC)"],["Noreg",a.reg,"Tipe","Bell "+(a.type||"412"),"S/N",a.sn||""],["A/C TT (jam)",+(+a.hrs).toFixed(2),"Dicetak",T(),"Filter",d.filter],[]];
+    const h0=top.length,ws=X.utils.aoa_to_sheet(top.concat([d.head],d.rows)),nc=d.head.length;
+    const line={style:"thin",color:{rgb:"BBBBBB"}},bd={top:line,bottom:line,left:line,right:line};
+    const fills={over:"FFC7CE",soon:"FFEB9C",out:"E7E6E6"},dec=[7,8,9,11,12,15,16],int=[10,13];
+    const cell=(r,c)=>{const ad=X.utils.encode_cell({r,c});return ws[ad]||(ws[ad]={t:"s",v:""})};
+    cell(0,0).s={font:{bold:true,sz:14}};
+    for(let c=0;c<nc;c++)cell(h0,c).s={font:{bold:true,color:{rgb:"FFFFFF"}},fill:{patternType:"solid",fgColor:{rgb:"17324D"}},alignment:{wrapText:true,vertical:"center"},border:bd};
+    d.rows.forEach((row,i)=>{for(let c=0;c<nc;c++){
+      const s={border:bd,alignment:{vertical:"top",wrapText:true}};
+      if(fills[d.st[i]])s.fill={patternType:"solid",fgColor:{rgb:fills[d.st[i]]}};
+      if(dec.includes(c))s.numFmt="0.00";else if(int.includes(c))s.numFmt="0";
+      cell(h0+1+i,c).s=s}});
+    ws["!cols"]=[5,32,22,18,14,16,12,12,11,11,10,10,12,12,12,10,12,38,30].map(w=>({wch:w}));
+    ws["!autofilter"]={ref:X.utils.encode_range({s:{r:h0,c:0},e:{r:h0+d.rows.length,c:nc-1}})};
+    ws["!merges"]=[{s:{r:0,c:0},e:{r:0,c:5}}];
+    const wb=X.utils.book_new();X.utils.book_append_sheet(wb,ws,("COMREC "+a.reg).replace(/[\\\/?*\[\]:]/g,"-").slice(0,31));
+    offerFile(name+".xlsx",X.write(wb,{bookType:"xlsx",type:"base64"}),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  }catch(err){
+    const q=v=>'"'+String(v).replace(/"/g,'""')+'"',csv="\ufeff"+[d.head].concat(d.rows).map(r=>r.map(q).join(",")).join("\r\n");
+    offerFile(name+".csv",btoa(unescape(encodeURIComponent(csv))),"text/csv");
+    $("banner").innerHTML="Pustaka Excel tidak dapat dimuat ("+esc(err.message||err)+"), jadi data diunduh sebagai CSV yang bisa dibuka di Excel. "+$("banner").innerHTML;
+  }
+}
+
 function woList(a){return D.wo.filter(w=>w.acId===a.id&&(w.title+w.finding+w.action+(w.parts||"")+(w.ata||"")+w.by).toLowerCase().includes(q)).sort((x,y)=>(y.date+y.ts>x.date+x.ts)?1:-1)}
 const blobData=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
 async function makePdf(kind,payload){
@@ -648,6 +709,8 @@ $("view").onclick=async e=>{
   else if(act==="delFile"){const cn=b.dataset.col||"spk";if(await ask("Hapus lampiran ini? File asli tetap tersimpan di Drive.")){const x=f(cn,id);await col(cn).doc(id).update({files:parseFiles(x.files).filter(y=>y.id!==b.dataset.fid).map(y=>y.id+" | "+y.name).join("\n")})}}
   else if(act==="attSpk"){const x=f("spk",id);openForm("Tambah lampiran: "+x.no,[{k:"files",l:"File lampiran (maks. 5 file, masing-masing 5 MB)",t:"attach"}],async o=>col("spk").doc(id).update({files:await upFiles(o.files,x.files)}))}
   else if(act==="fAll"){fq="";fcond="";render()}
+  else if(act==="expPdfC"){const d=compPdfData(a);if(!d.rows.length)banner("Tidak ada komponen untuk diekspor.");else await makePdf("comp",d)}
+  else if(act==="expXlsC")await compExcel(a);
   else if(act==="impDrive")await comrecFromDrive(a);
   else if(act==="impXlsx")$("comrecFile").click();
   else if(act==="addC")openForm("Komponen baru: "+a.reg,compFields(null,a),async o=>{o.hu=hKey(o.hu);o.cu=cuKey(o.cu);o.files=await upFiles(o.files,"","Component Record");await col("comp").add({...o,acId:a.id})});
