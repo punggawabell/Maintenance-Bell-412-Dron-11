@@ -345,7 +345,7 @@ const views={
     return `<div class="tools"><button data-act="newWo">Buat laporan kerja</button><button class="sec" data-act="pdfAll">Ekspor semua ke PDF</button><input id="q" type="search" placeholder="Cari laporan" aria-label="Cari laporan" value="${esc(q)}"></div>${r||"<p>Belum ada laporan kerja untuk "+esc(a.reg)+". Personel lapangan bisa membuatnya lewat tombol di atas.</p>"}`}
 };
 
-const SPKT=["Inspeksi terjadwal","Troubleshooting","Perbaikan","Penggantian komponen","Kepatuhan AD/SB","Lainnya"];
+const SPKT=["Inspeksi terjadwal","Troubleshooting","Perbaikan","Penggantian komponen","Kepatuhan AD/SB/ASB","Lainnya"];
 function spkSt(x){
   if(x.status==="Selesai")return["ok","Selesai"];
   if(x.status==="Dibatalkan")return["nb","Dibatalkan"];
@@ -360,7 +360,7 @@ function spkFields(x,a){
     {k:"due",l:"Target selesai",t:"date",v:x?.due||""},
     {k:"type",l:"Jenis pekerjaan",t:"select",o:SPKT,v:x?.type},
     {k:"assignee",l:"Pelaksana (nama / unit)",v:x?.assignee,req:1},
-    {k:"basis",l:"Dasar pelaksanaan (AD/SB, task MM, hasil inspeksi, permintaan operasi)",t:"area",v:x?.basis,req:1,full:1},
+    {k:"basis",l:"Dasar pelaksanaan (AD/SB/ASB, task MM, hasil inspeksi, permintaan operasi)",t:"area",v:x?.basis,req:1,full:1},
     {k:"scope",l:"Uraian pekerjaan",t:"area",v:x?.scope,req:1,full:1},
     {k:"issuer",l:"Pemberi perintah",v:x?.issuer||me,req:1},
     {k:"issuerTitle",l:"Jabatan",v:x?.issuerTitle,req:1},
