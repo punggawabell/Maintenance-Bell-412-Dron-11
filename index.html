@@ -103,8 +103,8 @@ td small,.wo p{white-space:pre-line}
 <div class="stat"><b id="sH1">0</b><span>Jam Engine 1</span></div>
 <div class="stat"><b id="sH2">0</b><span>Jam Engine 2</span></div>
 <div class="stat"><b id="sCyc">0</b><span>Landing</span></div>
-<div class="stat"><b id="sE1">0</b><span>Cycle Engine 1</span></div>
-<div class="stat"><b id="sE2">0</b><span>Cycle Engine 2</span></div>
+<div class="stat"><b id="sE1">0</b><span>Cycle Engine 1 (Start)</span></div>
+<div class="stat"><b id="sE2">0</b><span>Cycle Engine 2 (Start)</span></div>
 <div class="stat"><b id="sEx">0</b><span>Beban eksternal</span></div>
 <div class="stat"><b id="sOver">0</b><span>Lewat batas</span></div>
 <div class="stat"><b id="sSoon">0</b><span>Segera jatuh tempo</span></div>
@@ -136,7 +136,7 @@ const T=()=>new Date().toISOString().slice(0,10);
 const addD=(s,n)=>{const d=new Date(s);d.setDate(d.getDate()+n);return d};
 const days=s=>Math.ceil((new Date(s)-new Date(T()))/864e5);
 let db=null,assets=null,dls=null,me="",D={ac:[],tasks:[],dir:[],wo:[],spk:[],remark:[],comp:[]},cur=null,tab="fleet",fSave=null,q="",fq="",fcond="";
-const CU={cyc:"Landing",ce1:"Cycle Engine 1",ce2:"Cycle Engine 2",cx:"Cycle beban eksternal"},CUU={cyc:"Landing",ce1:"Cycle Engine 1",ce2:"Cycle Engine 2",cx:"Cycle beban ext."};
+const CU={cyc:"Landing",ce1:"Cycle Engine 1 (Start)",ce2:"Cycle Engine 2 (Start)",cx:"Cycle beban eksternal"},CUU={cyc:"Landing",ce1:"Cycle Engine 1 (Start)",ce2:"Cycle Engine 2 (Start)",cx:"Cycle beban ext."};
 const HU={hrs:"Airframe",eh1:"Engine 1",eh2:"Engine 2"},hKey=l=>Object.keys(HU).find(k=>HU[k]===l)||"hrs",n2=v=>(+v||0).toFixed(2);
 const cuKey=l=>Object.keys(CU).find(k=>CU[k]===l)||"cyc";
 const LBL={ok:"Aman",soon:"Segera",over:"Lewat batas",nb:"Terbuka"};
@@ -266,7 +266,7 @@ const col=c=>({
 const ask=m=>new Promise(r=>{const d=$("cdlg");$("cMsg").textContent=m;d.oncancel=()=>r(false);$("cYes").onclick=()=>{d.close();r(true)};$("cNo").onclick=()=>{d.close();r(false)};d.showModal()});
 const sampleTasks=[["Inspeksi 25 jam","MM Bab 5",25,0],["Inspeksi 100 jam","MM Bab 5",100,0],["Inspeksi 300 jam","MM Bab 5",300,0],["Inspeksi 600 jam","MM Bab 5",600,0],["Inspeksi 600 jam (2)","MM Bab 5",1200,0],["Inspeksi 5000 jam/5 Years","MM Bab 5",5000,1825]];
 
-const acFields=a=>[{k:"reg",l:"Registrasi",v:a?.reg,req:1},{k:"sn",l:"Serial number",v:a?.sn},{k:"type",l:"Tipe",t:"select",o:["412","412SP","412EP","412EPI"],v:a?.type},{k:"hrs",l:"Total jam (FH)",t:"number",step:"0.01",v:a?.hrs??0},{k:"eh1",l:"Total jam Engine 1",t:"number",step:"0.01",v:a?.eh1??0},{k:"eh2",l:"Total jam Engine 2",t:"number",step:"0.01",v:a?.eh2??0},{k:"cyc",l:"Total Landing",t:"number",v:a?.cyc??0},{k:"ce1",l:"Cycle Engine 1",t:"number",v:a?.ce1??0},{k:"ce2",l:"Cycle Engine 2",t:"number",v:a?.ce2??0},{k:"cx",l:"Cycle beban eksternal",t:"number",v:a?.cx??0}];
+const acFields=a=>[{k:"reg",l:"Registrasi",v:a?.reg,req:1},{k:"sn",l:"Serial number",v:a?.sn},{k:"type",l:"Tipe",t:"select",o:["412","412SP","412EP","412EPI"],v:a?.type},{k:"hrs",l:"Total jam (FH)",t:"number",step:"0.01",v:a?.hrs??0},{k:"eh1",l:"Total jam Engine 1",t:"number",step:"0.01",v:a?.eh1??0},{k:"eh2",l:"Total jam Engine 2",t:"number",step:"0.01",v:a?.eh2??0},{k:"cyc",l:"Total Landing",t:"number",v:a?.cyc??0},{k:"ce1",l:"Cycle Engine 1 (Start)",t:"number",v:a?.ce1??0},{k:"ce2",l:"Cycle Engine 2 (Start)",t:"number",v:a?.ce2??0},{k:"cx",l:"Cycle beban eksternal",t:"number",v:a?.cx??0}];
 function taskFields(t,a){return[{k:"name",l:"Nama tugas",v:t?.name,req:1,full:1},{k:"ref",l:"Referensi (MM / AD / SB / ASB)",v:t?.ref,full:1},{k:"hu",l:"Penghitung jam yang dipakai",t:"select",o:Object.values(HU),v:HU[t?.hu||"hrs"]},{k:"ih",l:"Interval jam",t:"number",step:"0.01",v:t?.ih||""},{k:"id_",l:"Interval hari",t:"number",v:t?.id_||""},{k:"ic",l:"Interval Cycle",t:"number",v:t?.ic||""},{k:"cu",l:"Penghitung Cycle yang dipakai",t:"select",o:Object.values(CU),v:CU[t?.cu||"cyc"]},{k:"lh",l:"Terakhir pada jam",t:"number",step:"0.01",v:t?.lh??a.hrs},{k:"ld",l:"Terakhir pada tanggal",t:"date",v:t?.ld||T()},{k:"lc",l:"Terakhir pada Cycle",t:"number",v:t?.lc??a.cyc}]}
 function dirFields(d){return[{k:"kind",l:"Jenis",t:"select",o:["AD","SB"],v:d?.kind},{k:"no",l:"Nomor",v:d?.no,req:1},{k:"title",l:"Judul / subjek",v:d?.title,req:1,full:1},{k:"dueDate",l:"Batas tanggal",t:"date",v:d?.dueDate||""},{k:"dueHrs",l:"Batas jam pesawat",t:"number",step:"0.01",v:d?.dueHrs||""},{k:"status",l:"Status",t:"select",o:["Terbuka","Selesai"],v:d?.status||"Terbuka"},{k:"doneDate",l:"Tanggal selesai",t:"date",v:d?.doneDate||""},{k:"note",l:"Catatan kepatuhan",t:"area",v:d?.note,full:1}]}
 
@@ -746,7 +746,7 @@ $("view").onclick=async e=>{
     {k:"h",l:"Jam terbang (airframe)",t:"number",step:"0.01",v:""},
     {k:"h1",l:"Jam Engine 1 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
     {k:"h2",l:"Jam Engine 2 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
-    {k:"l",l:"Landing",t:"number",v:""},{k:"e1",l:"Cycle Engine 1",t:"number",v:""},{k:"e2",l:"Cycle Engine 2",t:"number",v:""},{k:"x",l:"Cycle beban eksternal",t:"number",v:""}
+    {k:"l",l:"Landing",t:"number",v:""},{k:"e1",l:"Cycle Engine 1 (Start)",t:"number",v:""},{k:"e2",l:"Cycle Engine 2 (Start)",t:"number",v:""},{k:"x",l:"Cycle beban eksternal",t:"number",v:""}
   ],o=>col("ac").doc(id).inc({hrs:o.h,eh1:o.h1===""?o.h:o.h1,eh2:o.h2===""?o.h:o.h2,cyc:o.l,ce1:o.e1,ce2:o.e2,cx:o.x}))}
   else if(act==="addT")openForm("Tugas baru",taskFields(null,a),o=>col("tasks").add({...o,cu:cuKey(o.cu),hu:hKey(o.hu),acId:a.id}));
   else if(act==="editT")openForm("Ubah tugas",taskFields(f("tasks",id),a),o=>col("tasks").doc(id).update({...o,cu:cuKey(o.cu),hu:hKey(o.hu)}));
