@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
+<meta charset="utf-10">
 <meta name="theme-color" content="#17324d">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -103,19 +103,19 @@ td small,.wo p{white-space:pre-line}
 <div class="stat"><b id="sH1">0</b><span>Jam Engine 1</span></div>
 <div class="stat"><b id="sH2">0</b><span>Jam Engine 2</span></div>
 <div class="stat"><b id="sCyc">0</b><span>Landing</span></div>
-<div class="stat"><b id="sE1">0</b><span>Cycle Engine 1 (Start)</span></div>
-<div class="stat"><b id="sE2">0</b><span>Cycle Engine 2 (Start)</span></div>
+<div class="stat"><b id="sE1">0</b><span>Cycle Engine 1</span></div>
+<div class="stat"><b id="sE2">0</b><span>Cycle Engine 2</span></div>
 <div class="stat"><b id="sEx">0</b><span>Beban eksternal</span></div>
 <div class="stat"><b id="sOver">0</b><span>Lewat batas</span></div>
 <div class="stat"><b id="sSoon">0</b><span>Segera jatuh tempo</span></div>
-<div class="stat"><b id="sRm">0</b><span>Complain pilot terbuka</span></div>
+<div class="stat"><b id="sRm">0</b><span>Complain Pilot terbuka</span></div>
 </div></div></header>
 <div id="banner"></div>
 <nav class="wrap" id="tabs">
-<button data-tab="fleet">Noreg</button><button data-tab="remark">Complain pilot</button><button data-tab="spk">SPK</button><button data-tab="wo">Laporan kerja</button><button data-tab="tasks">Jadwal inspeksi</button><button data-tab="dir">AD / SB / ASB</button><button data-tab="comp">COMREC</button><button data-tab="parts">Ringkasan part</button>
+<button data-tab="fleet">Noreg</button><button data-tab="remark">Complain Pilot</button><button data-tab="spk">SPK</button><button data-tab="wo">Laporan kerja</button><button data-tab="tasks">Jadwal inspeksi</button><button data-tab="dir">AD / SB / ASB</button><button data-tab="comp">COMREC</button><button data-tab="parts">Ringkasan part</button>
 </nav>
 <main class="wrap"><section class="panel" id="view"></section>
-<p class="note">Data awal hanyalah contoh. Sesuaikan semua interval dengan BHT-412-MM, AD, SB, ASB dan program perawatan yang disetujui DGCA. Hak menulis ditentukan oleh siapa yang diberi akses Editor ke Google Spreadsheet data.</p><p class="note" id="ver" style="max-width:1040px;margin:0 auto;padding:0 16px 16px">Versi aplikasi: COMREC impor, 29 Okt 2026</p></main>
+<p class="note">Data awal hanyalah contoh. Sesuaikan semua interval dengan BHT-412-MM, AD, SB, dan program perawatan yang disetujui DGCA. Hak menulis ditentukan oleh siapa yang diberi akses Editor ke Google Spreadsheet data.</p><p class="note" id="ver" style="max-width:1040px;margin:0 auto;padding:0 16px 16px">Versi aplikasi: COMREC impor, 29 Okt 2026</p></main>
 
 <dialog id="ldlg"><div id="lf"><h2>Masuk ke Maintenance</h2><div id="gsec"><p style="margin:10px 0">Masuk dengan akun Google Anda. Setiap input dan perubahan data dicatat atas nama akun ini.</p><div id="gbtn" style="min-height:44px;margin:12px 0"></div></div><form id="nf" style="display:none"><p style="margin:10px 0">Isi nama Anda. Nama ini dicatat sebagai pelapor pada setiap input.</p><label style="display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px;margin-bottom:10px">Nama Anda<input id="nName" required autocomplete="name" maxlength="60"></label><button type="submit">Masuk</button></form><p id="lErr" role="alert" style="color:var(--over);margin:0 0 8px"></p></div></dialog>
 <input type="file" id="comrecFile" accept=".xlsx" hidden>
@@ -136,7 +136,7 @@ const T=()=>new Date().toISOString().slice(0,10);
 const addD=(s,n)=>{const d=new Date(s);d.setDate(d.getDate()+n);return d};
 const days=s=>Math.ceil((new Date(s)-new Date(T()))/864e5);
 let db=null,assets=null,dls=null,me="",D={ac:[],tasks:[],dir:[],wo:[],spk:[],remark:[],comp:[]},cur=null,tab="fleet",fSave=null,q="",fq="",fcond="";
-const CU={cyc:"Landing",ce1:"Cycle Engine 1 (Start)",ce2:"Cycle Engine 2 (Start)",cx:"Cycle beban eksternal"},CUU={cyc:"Landing",ce1:"Cycle Engine 1 (Start)",ce2:"Cycle Engine 2 (Start)",cx:"Cycle beban ext."};
+const CU={cyc:"Landing",ce1:"Cycle Engine 1",ce2:"Cycle Engine 2",cx:"Cycle beban eksternal"},CUU={cyc:"Landing",ce1:"Cycle Engine 1",ce2:"Cycle Engine 2",cx:"Cycle beban ext."};
 const HU={hrs:"Airframe",eh1:"Engine 1",eh2:"Engine 2"},hKey=l=>Object.keys(HU).find(k=>HU[k]===l)||"hrs",n2=v=>(+v||0).toFixed(2);
 const cuKey=l=>Object.keys(CU).find(k=>CU[k]===l)||"cyc";
 const LBL={ok:"Aman",soon:"Segera",over:"Lewat batas",nb:"Terbuka"};
@@ -266,9 +266,9 @@ const col=c=>({
 const ask=m=>new Promise(r=>{const d=$("cdlg");$("cMsg").textContent=m;d.oncancel=()=>r(false);$("cYes").onclick=()=>{d.close();r(true)};$("cNo").onclick=()=>{d.close();r(false)};d.showModal()});
 const sampleTasks=[["Inspeksi 100 jam / 12 bulan","MM Bab 5",100,365],["Inspeksi 300 jam","MM Bab 5",300,0],["Inspeksi 600 jam","MM Bab 5",600,0],["Baterai ELT","MM Bab 5",0,730],["Pemeriksaan fire extinguisher","MM Bab 26",0,365]];
 
-const acFields=a=>[{k:"reg",l:"Registrasi",v:a?.reg,req:1},{k:"sn",l:"Serial number",v:a?.sn},{k:"type",l:"Tipe",t:"select",o:["412","412SP","412EP","412EPI"],v:a?.type},{k:"hrs",l:"Total jam (FH)",t:"number",step:"0.01",v:a?.hrs??0},{k:"eh1",l:"Total jam Engine 1",t:"number",step:"0.01",v:a?.eh1??0},{k:"eh2",l:"Total jam Engine 2",t:"number",step:"0.01",v:a?.eh2??0},{k:"cyc",l:"Total Landing",t:"number",v:a?.cyc??0},{k:"ce1",l:"Cycle Engine 1 (Start)",t:"number",v:a?.ce1??0},{k:"ce2",l:"Cycle Engine 2 (Start)",t:"number",v:a?.ce2??0},{k:"cx",l:"Cycle beban eksternal",t:"number",v:a?.cx??0}];
+const acFields=a=>[{k:"reg",l:"Registrasi",v:a?.reg,req:1},{k:"sn",l:"Serial number",v:a?.sn},{k:"type",l:"Tipe",t:"select",o:["412","412SP","412EP","412EPI"],v:a?.type},{k:"hrs",l:"Total jam (FH)",t:"number",step:"0.01",v:a?.hrs??0},{k:"eh1",l:"Total jam Engine 1",t:"number",step:"0.01",v:a?.eh1??0},{k:"eh2",l:"Total jam Engine 2",t:"number",step:"0.01",v:a?.eh2??0},{k:"cyc",l:"Total Landing",t:"number",v:a?.cyc??0},{k:"ce1",l:"Cycle Engine 1",t:"number",v:a?.ce1??0},{k:"ce2",l:"Cycle Engine 2",t:"number",v:a?.ce2??0},{k:"cx",l:"Cycle beban eksternal",t:"number",v:a?.cx??0}];
 function taskFields(t,a){return[{k:"name",l:"Nama tugas",v:t?.name,req:1,full:1},{k:"ref",l:"Referensi (MM / AD / SB / ASB)",v:t?.ref,full:1},{k:"hu",l:"Penghitung jam yang dipakai",t:"select",o:Object.values(HU),v:HU[t?.hu||"hrs"]},{k:"ih",l:"Interval jam",t:"number",step:"0.01",v:t?.ih||""},{k:"id_",l:"Interval hari",t:"number",v:t?.id_||""},{k:"ic",l:"Interval Cycle",t:"number",v:t?.ic||""},{k:"cu",l:"Penghitung Cycle yang dipakai",t:"select",o:Object.values(CU),v:CU[t?.cu||"cyc"]},{k:"lh",l:"Terakhir pada jam",t:"number",step:"0.01",v:t?.lh??a.hrs},{k:"ld",l:"Terakhir pada tanggal",t:"date",v:t?.ld||T()},{k:"lc",l:"Terakhir pada Cycle",t:"number",v:t?.lc??a.cyc}]}
-function dirFields(d){return[{k:"kind",l:"Jenis",t:"select",o:["AD","SB", "ASB"],v:d?.kind},{k:"no",l:"Nomor",v:d?.no,req:1},{k:"title",l:"Judul / subjek",v:d?.title,req:1,full:1},{k:"dueDate",l:"Batas tanggal",t:"date",v:d?.dueDate||""},{k:"dueHrs",l:"Batas jam pesawat",t:"number",step:"0.01",v:d?.dueHrs||""},{k:"status",l:"Status",t:"select",o:["Terbuka","Selesai"],v:d?.status||"Terbuka"},{k:"doneDate",l:"Tanggal selesai",t:"date",v:d?.doneDate||""},{k:"note",l:"Catatan kepatuhan",t:"area",v:d?.note,full:1}]}
+function dirFields(d){return[{k:"kind",l:"Jenis",t:"select",o:["AD","SB"],v:d?.kind},{k:"no",l:"Nomor",v:d?.no,req:1},{k:"title",l:"Judul / subjek",v:d?.title,req:1,full:1},{k:"dueDate",l:"Batas tanggal",t:"date",v:d?.dueDate||""},{k:"dueHrs",l:"Batas jam pesawat",t:"number",step:"0.01",v:d?.dueHrs||""},{k:"status",l:"Status",t:"select",o:["Terbuka","Selesai"],v:d?.status||"Terbuka"},{k:"doneDate",l:"Tanggal selesai",t:"date",v:d?.doneDate||""},{k:"note",l:"Catatan kepatuhan",t:"area",v:d?.note,full:1}]}
 
 function newReport(spkId,rm){
   const a=A();if(!a){tab="fleet";render();banner("Tambahkan pesawat dulu di tab Noreg.");return}
@@ -284,11 +284,12 @@ function newReport(spkId,rm){
     {k:"action",l:"Tindakan yang dilakukan",t:"area",req:1,full:1},
     ...(assets?[{k:"photos",l:"Foto temuan (maks. 4)",t:"file"}]:[]),
     {k:"parts",l:"Part / material",t:"parts",full:1},
-    {k:"by",l:"Nama personel (tanda tangan)",v:me,req:1},
+    {k:"by",l:"Nama personel",v:me,req:1},
+    {k:"rank",l:"Pangkat",v:myRank()},
     {k:"link",l:"Selesaikan tugas terjadwal",t:"select",o:["(tidak ada)",...ts.map(t=>t.name)],v:"(tidak ada)"}
   ],async o=>{
     const t=ts.find(x=>x.name===o.link);delete o.link;
-    const files=(o.photos||[]).slice(0,4);o.photos=[];
+    setRank(o.rank);const files=(o.photos||[]).slice(0,4);o.photos=[];
     for(const f of files){const r=await assets.upload(await shrink(f),a.id);o.photos.push(r.id)}
     const sp=D.spk.find(x=>x.acId===a.id&&x.no===o.spk);delete o.spk;
     if(sp){o.spkId=sp.id;o.spkNo=sp.no}
@@ -325,7 +326,7 @@ function fleetMatch(a){
 const views={
   fleet(){
     const L_=D.ac.filter(fleetMatch),r=L_.map(a=>{const c=counts(a);return row([`<b>${esc(a.reg)}</b><small>${esc(a.type)} ${esc(a.sn?"S/N "+a.sn:"")}</small>`,condCell(a),n2(a.hrs)+" jam<small>Engine 1: "+n2(a.eh1)+" | Engine 2: "+n2(a.eh2)+"</small>",a.cyc+" / "+(a.ce1||0)+" / "+(a.ce2||0)+" / "+(a.cx||0),c.o?`<span class="badge over">${c.o} lewat</span>`:"-",c.s?`<span class="badge soon">${c.s} segera</span>`:"-",rmCell(a),btn("open",a.id,"Buka",0)+" "+btn("flight",a.id,"Tambah jam")+" "+btn("cond",a.id,"Kondisi/Remark")+" "+btn("editAc",a.id,"Ubah")+" "+btn("pdfAc",a.id,"Simpan PDF")])}).join("");
-    return `<div class="tools"><button data-act="addAc">Tambah pesawat</button><input id="fsq" type="search" placeholder="Cari noreg, tipe, kondisi, remark" aria-label="Cari noreg" value="${esc(fq)}"><select id="fcond" aria-label="Filter kondisi" style="max-width:230px"><option value="">Semua kondisi</option>${COND.concat(["Belum diisi"]).map(c=>`<option ${c===fcond?"selected":""}>${esc(c)}</option>`).join("")}</select><button class="sec" data-act="fAll">Tampilkan semua</button></div><p class="note" style="margin:0 0 10px">Menampilkan ${L_.length} dari ${D.ac.length} pesawat</p><div class="tbl"><table><thead><tr><th>Pesawat</th><th>Kondisi / Remark</th><th>Jam terbang / Engine</th><th>Landing / Engine 1 / Engine 2 / Beban ext.</th><th>Lewat batas</th><th>Segera</th><th>Complain pilot</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="8">${D.ac.length?"Tidak ada pesawat yang cocok. Pilih Tampilkan semua.":"Belum ada pesawat. Pilih Tambah pesawat untuk memulai."}</td></tr>`}</tbody></table></div>`},
+    return `<div class="tools"><button data-act="addAc">Tambah pesawat</button><input id="fsq" type="search" placeholder="Cari noreg, tipe, kondisi, remark" aria-label="Cari noreg" value="${esc(fq)}"><select id="fcond" aria-label="Filter kondisi" style="max-width:230px"><option value="">Semua kondisi</option>${COND.concat(["Belum diisi"]).map(c=>`<option ${c===fcond?"selected":""}>${esc(c)}</option>`).join("")}</select><button class="sec" data-act="fAll">Tampilkan semua</button></div><p class="note" style="margin:0 0 10px">Menampilkan ${L_.length} dari ${D.ac.length} pesawat</p><div class="tbl"><table><thead><tr><th>Pesawat</th><th>Kondisi / Remark</th><th>Jam terbang / Engine</th><th>Landing / Engine 1 / Engine 2 / Beban ext.</th><th>Lewat batas</th><th>Segera</th><th>Complain Pilot</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="8">${D.ac.length?"Tidak ada pesawat yang cocok. Pilih Tampilkan semua.":"Belum ada pesawat. Pilih Tambah pesawat untuk memulai."}</td></tr>`}</tbody></table></div>`},
   tasks(a){
     if(!a)return"<p>Tambahkan pesawat dulu.</p>";
     const items=D.tasks.filter(t=>t.acId===a.id).map(t=>({t,c:calc(t,a)})).sort((x,y)=>x.c.score-y.c.score);
@@ -337,11 +338,11 @@ const views={
     if(!a)return"<p>Tambahkan pesawat dulu.</p>";
     const r=D.dir.filter(d=>d.acId===a.id).map(d=>({d,c:dcalc(d,a)})).sort((x,y)=>(x.c.st==="ok")-(y.c.st==="ok")).map(({d,c})=>
       row([`<b>${esc(d.kind)} ${esc(d.no)}</b>`,esc(d.title)+(d.note?`<small>${esc(d.note)}</small>`:""),`<span class="${c.st==="over"?"rem over":c.st==="soon"?"rem soon":""}">${esc(c.txt)}</span>`,`<span class="badge ${c.st}">${LBL[c.st]}</span>`,(d.status==="Selesai"?"":btn("doneD",d.id,"Selesai",0)+" ")+btn("editD",d.id,"Ubah")+" "+btn("delD",d.id,"Hapus")])).join("");
-    return `<div class="tools"><button data-act="addD">Tambah AD / SB / ASB</button></div><div class="tbl"><table><thead><tr><th>Nomor</th><th>Subjek</th><th>Batas</th><th>Status</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="5">Belum ada AD, SB atau ASB untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`},
+    return `<div class="tools"><button data-act="addD">Tambah AD / SB / ASB</button></div><div class="tbl"><table><thead><tr><th>Nomor</th><th>Subjek</th><th>Batas</th><th>Status</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="5">Belum ada AD atau SB untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`},
   wo(a){
     if(!a)return"<p>Tambahkan pesawat dulu.</p>";
     const list=woList(a);
-    const r=list.map(w=>`<div class="wo"><div class="meta">${esc(w.date)} | ${esc(w.type)} | ${esc(w.hrs)} jam${w.ata?" | ATA "+esc(w.ata):""}</div><h3>${esc(w.title)}</h3>${w.spkNo?`<p><b>SPK:</b> ${esc(w.spkNo)}</p>`:""}<p><b>Temuan:</b> ${esc(w.finding)}</p><p><b>Tindakan:</b> ${esc(w.action)}</p>${partsTbl(w.parts)}${(w.photos||[]).length?`<div class="photos">${w.photos.map(i=>`<img data-pid="${esc(i)}" alt="Foto temuan">`).join("")}</div>`:""}<div class="meta">Dilaporkan oleh ${esc(w.by)}</div>${w.crs?`<div class="crs"><span class="badge ok">CRS diterbitkan</span> oleh ${esc(w.crs.by)} (${esc(w.crs.lic)}) pada ${esc(w.crs.date)}<br>${esc(w.crs.stmt)}${w.crs.note?"<br>"+esc(w.crs.note):""}${w.crs.sig?`<img data-pid="${esc(w.crs.sig)}" alt="Tanda tangan CRS">`:""}</div>`:""}<div class="tools" style="margin:8px 0 0">${w.crs?"":btn("crs",w.id,"Terbitkan CRS",0)} ${btn("pdf",w.id,"Unduh PDF")}</div></div>`).join("");
+    const r=list.map(w=>`<div class="wo"><div class="meta">${esc(w.date)} | ${esc(w.type)} | ${esc(w.hrs)} jam${w.ata?" | ATA "+esc(w.ata):""}</div><h3>${esc(w.title)}</h3>${w.spkNo?`<p><b>SPK:</b> ${esc(w.spkNo)}</p>`:""}<p><b>Temuan:</b> ${esc(w.finding)}</p><p><b>Tindakan:</b> ${esc(w.action)}</p>${partsTbl(w.parts)}${(w.photos||[]).length?`<div class="photos">${w.photos.map(i=>`<img data-pid="${esc(i)}" alt="Foto temuan">`).join("")}</div>`:""}<div class="meta">Dilaporkan oleh ${esc(w.by)}${w.rank?", "+esc(w.rank):""}</div>${w.crs?`<div class="crs"><span class="badge ok">CRS diterbitkan</span> oleh ${esc(w.crs.by)} (${esc(w.crs.lic)}) pada ${esc(w.crs.date)}<br>${esc(w.crs.stmt)}${w.crs.note?"<br>"+esc(w.crs.note):""}${w.crs.sig?`<img data-pid="${esc(w.crs.sig)}" alt="Tanda tangan CRS">`:""}</div>`:""}<div class="tools" style="margin:8px 0 0">${w.crs?"":btn("crs",w.id,"Terbitkan CRS",0)} ${btn("pdf",w.id,"Unduh PDF")}</div></div>`).join("");
     return `<div class="tools"><button data-act="newWo">Buat laporan kerja</button><button class="sec" data-act="pdfAll">Ekspor semua ke PDF</button><input id="q" type="search" placeholder="Cari laporan" aria-label="Cari laporan" value="${esc(q)}"></div>${r||"<p>Belum ada laporan kerja untuk "+esc(a.reg)+". Personel lapangan bisa membuatnya lewat tombol di atas.</p>"}`}
 };
 
@@ -359,11 +360,12 @@ function spkFields(x,a){
     {k:"date",l:"Tanggal terbit",t:"date",v:x?.date||T(),req:1},
     {k:"due",l:"Target selesai",t:"date",v:x?.due||""},
     {k:"type",l:"Jenis pekerjaan",t:"select",o:SPKT,v:x?.type},
-    {k:"assignee",l:"Pelaksana (nama personel yang mengerjakan)",v:x?.assignee,req:1},
+    {k:"assignee",l:"Pelaksana (nama / unit)",v:x?.assignee,req:1},
     {k:"basis",l:"Dasar pelaksanaan (AD/SB/ASB, task MM, hasil inspeksi, permintaan operasi)",t:"area",v:x?.basis,req:1,full:1},
     {k:"scope",l:"Uraian pekerjaan",t:"area",v:x?.scope,req:1,full:1},
     {k:"issuer",l:"Pemberi perintah",v:x?.issuer||me,req:1},
-    {k:"issuerTitle",l:"Jabatan",v:x?.issuerTitle,req:1},
+    {k:"issuerTitle",l:"Jabatan (tampil di atas tanda tangan)",v:x?.issuerTitle,req:1},
+    {k:"issuerRank",l:"Pangkat (kosong = diisi manual di kertas)",v:x?.issuerRank},
     {k:"files",l:"Lampiran file (opsional; maks. 5 file, masing-masing 5 MB)",t:"attach"},
     {k:"sig",l:x?"Tanda tangan baru (kosongkan untuk tetap memakai yang lama)":"Tanda tangan pemberi perintah (opsional)",t:"sig"}
   ];
@@ -382,7 +384,7 @@ views.remark=function(a){
   const l=D.remark.filter(x=>x.acId===a.id).sort((x,y)=>((x.status==="Selesai")-(y.status==="Selesai"))||((y.date+y.ts>x.date+x.ts)?1:-1));
   const r=l.map(x=>row([esc(x.date)+`<small>${n2(x.hrs)} jam</small>`,esc(x.pilot||"-"),esc(x.text),`<span class="badge ${RMC[x.status]||"nb"}">${esc(x.status)}</span>`,x.act?esc(x.act)+(x.closedDate?`<small>Ditutup ${esc(x.closedDate)}</small>`:""):"-",
     x.status!=="Selesai"?btn("woRm",x.id,"Buat laporan",0)+" "+(x.status==="Baru"?btn("procRm",x.id,"Proses")+" ":"")+btn("closeRm",x.id,"Selesai"):""])).join("");
-  return `<div class="tools"><button data-act="addRm">Tambah Complain pilot</button></div><div class="tbl"><table><thead><tr><th>Tanggal</th><th>Pilot</th><th>Remark / keluhan</th><th>Status</th><th>Tindak lanjut</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="6">Belum ada complain pilot untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`};
+  return `<div class="tools"><button data-act="addRm">Tambah Complain Pilot</button></div><div class="tbl"><table><thead><tr><th>Tanggal</th><th>Pilot</th><th>Remark / keluhan</th><th>Status</th><th>Tindak lanjut</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="6">Belum ada Complain Pilot untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`};
 views.parts=function(a){
   const regOf=id=>(D.ac.find(x=>x.id===id)||{}).reg||"?";
   const g={};
@@ -669,6 +671,8 @@ async function compExcel(a){
   }
 }
 
+const myRank=()=>{try{return localStorage.getItem("bell412-rank")||""}catch(e){return""}};
+const setRank=v=>{try{localStorage.setItem("bell412-rank",v||"")}catch(e){}};
 function woList(a){return D.wo.filter(w=>w.acId===a.id&&(w.title+w.finding+w.action+(w.parts||"")+(w.ata||"")+w.by).toLowerCase().includes(q)).sort((x,y)=>(y.date+y.ts>x.date+x.ts)?1:-1)}
 const blobData=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
 async function makePdf(kind,payload){
@@ -705,7 +709,7 @@ $("view").onclick=async e=>{
   else if(act==="closeSpk"){const x=f("spk",id),n=D.wo.filter(w=>w.spkId===id).length;if(await ask(`Tutup SPK ${x.no}? Laporan terkait: ${n}.`))await col("spk").doc(id).update({status:"Selesai",closedDate:T()})}
   else if(act==="cancelSpk"){if(await ask("Batalkan SPK ini?"))await col("spk").doc(id).update({status:"Dibatalkan"})}
   else if(act==="rmOpen"){cur=id;tab="remark";render()}
-  else if(act==="addRm")openForm("Complain pilot: "+a.reg,[{k:"date",l:"Tanggal",t:"date",v:T(),req:1},{k:"pilot",l:"Nama pilot",req:1},{k:"hrs",l:"Jam pesawat saat ini",t:"number",step:"0.01",v:a.hrs},{k:"text",l:"Remark / keluhan pilot",t:"area",req:1,full:1}],o=>col("remark").add({...o,acId:a.id,status:"Baru",act:"",closedDate:"",by:me,ts:Date.now()}));
+  else if(act==="addRm")openForm("Complain Pilot: "+a.reg,[{k:"date",l:"Tanggal",t:"date",v:T(),req:1},{k:"pilot",l:"Nama pilot",req:1},{k:"hrs",l:"Jam pesawat saat ini",t:"number",step:"0.01",v:a.hrs},{k:"text",l:"Remark / keluhan pilot",t:"area",req:1,full:1}],o=>col("remark").add({...o,acId:a.id,status:"Baru",act:"",closedDate:"",by:me,ts:Date.now()}));
   else if(act==="procRm")await col("remark").doc(id).update({status:"Dalam proses"});
   else if(act==="closeRm")openForm("Tutup remark",[{k:"act",l:"Tindak lanjut yang dilakukan",t:"area",req:1,full:1}],o=>col("remark").doc(id).update({status:"Selesai",act:o.act,closedDate:T()}));
   else if(act==="woRm")newReport(null,f("remark",id));
@@ -735,14 +739,14 @@ $("view").onclick=async e=>{
     {k:"sig",l:"Tanda tangan (gambar dengan jari atau mouse)",t:"sig"}
   ],async o=>{if(!o.sig)throw new Error("Tanda tangan wajib diisi.");await col("wo").doc(id).update({crs:{...o,date:T(),ts:Date.now()}})})}
   else if(act==="open"){cur=id;tab="wo";render()}
-  else if(act==="cond"){const x=f("ac",id);openForm("Kondisi/Remark pesawat: "+x.reg,[{k:"cond",l:"Kondisi",t:"select",o:COND,v:x.cond||COND[0],full:1},{k:"remark",l:"Remark kondisi pesawat",t:"area",v:x.remark||"",full:1}],o=>col("ac").doc(id).update({...o,condDate:T(),condBy:me}))}
+  else if(act==="cond"){const x=f("ac",id);openForm("Kondisi pesawat: "+x.reg,[{k:"cond",l:"Kondisi",t:"select",o:COND,v:x.cond||COND[0],full:1},{k:"remark",l:"Remark kondisi pesawat",t:"area",v:x.remark||"",full:1}],o=>col("ac").doc(id).update({...o,condDate:T(),condBy:me}))}
   else if(act==="addAc")openForm("Pesawat baru",acFields(),async o=>{const r=await col("ac").add(o);cur=r.id});
   else if(act==="editAc")openForm("Ubah pesawat",acFields(f("ac",id)),o=>col("ac").doc(id).update(o));
   else if(act==="flight"){const x=f("ac",id);openForm("Tambah jam: "+x.reg,[
     {k:"h",l:"Jam terbang (airframe)",t:"number",step:"0.01",v:""},
     {k:"h1",l:"Jam Engine 1 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
     {k:"h2",l:"Jam Engine 2 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
-    {k:"l",l:"Landing",t:"number",v:""},{k:"e1",l:"Cycle Engine 1 (Start)",t:"number",v:""},{k:"e2",l:"Cycle Engine 2 (Start)",t:"number",v:""},{k:"x",l:"Cycle beban eksternal",t:"number",v:""}
+    {k:"l",l:"Landing",t:"number",v:""},{k:"e1",l:"Cycle Engine 1",t:"number",v:""},{k:"e2",l:"Cycle Engine 2",t:"number",v:""},{k:"x",l:"Cycle beban eksternal",t:"number",v:""}
   ],o=>col("ac").doc(id).inc({hrs:o.h,eh1:o.h1===""?o.h:o.h1,eh2:o.h2===""?o.h:o.h2,cyc:o.l,ce1:o.e1,ce2:o.e2,cx:o.x}))}
   else if(act==="addT")openForm("Tugas baru",taskFields(null,a),o=>col("tasks").add({...o,cu:cuKey(o.cu),hu:hKey(o.hu),acId:a.id}));
   else if(act==="editT")openForm("Ubah tugas",taskFields(f("tasks",id),a),o=>col("tasks").doc(id).update({...o,cu:cuKey(o.cu),hu:hKey(o.hu)}));
