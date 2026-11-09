@@ -325,7 +325,7 @@ function fleetMatch(a){
 }
 const views={
   fleet(){
-    const L_=D.ac.filter(fleetMatch),r=L_.map(a=>{const c=counts(a);return row([`<b><span>${esc(a.reg)}</span></b>  <small>${esc(a.type)} ${esc(a.sn?"S/N "+a.sn:"")}</small>`,condCell(a),n2(a.hrs)+" jam<small>Engine 1: "+n2(a.eh1)+" | Engine 2: "+n2(a.eh2)+"</small>",a.cyc+" / "+(a.ce1||0)+" / "+(a.ce2||0)+" / "+(a.cx||0),c.o?`<span class="badge over">${c.o} lewat</span>`:"-",c.s?`<span class="badge soon">${c.s} segera</span>`:"-",rmCell(a),btn("open",a.id,"Buka",0)+" "+btn("flight",a.id,"Tambah jam")+" "+btn("cond",a.id,"Kondisi")+" "+btn("editAc",a.id,"Ubah")+" "+btn("pdfAc",a.id,"Simpan PDF")])}).join("");
+    const L_=D.ac.filter(fleetMatch),r=L_.map(a=>{const c=counts(a);return row([`<b><span>${esc(a.reg)}</span></b>  <small>${esc(a.type)} ${esc(a.sn?"S/N "+a.sn:"")}</small>`,condCell(a),n2(a.hrs)+" jam<small>Engine 1: "+n2(a.eh1)+" | Engine 2: "+n2(a.eh2)+"</small>",a.cyc+" / "+(a.ce1||0)+" / "+(a.ce2||0)+" / "+(a.cx||0),c.o?`<span class="badge over">${c.o} lewat</span>`:"-",c.s?`<span class="badge soon">${c.s} segera</span>`:"-",rmCell(a),btn("open",a.id,"Buka",0)+" "+btn("flight",a.id,"Tambah jam")+" "+btn("cond",a.id,"Remark/Kondisi")+" "+btn("editAc",a.id,"Ubah")+" "+btn("pdfAc",a.id,"Simpan PDF")])}).join("");
     return `<div class="tools"><button data-act="addAc">Tambah pesawat</button><input id="fsq" type="search" placeholder="Cari noreg, tipe, Kondisi/Remark, remark" aria-label="Cari noreg" value="${esc(fq)}"><select id="fcond" aria-label="Filter Kondisi/Remark" style="max-width:230px"><option value="">Semua Kondisi/Remark</option>${COND.concat(["Belum diisi"]).map(c=>`<option ${c===fcond?"selected":""}>${esc(c)}</option>`).join("")}</select><button class="sec" data-act="fAll">Tampilkan semua</button></div><p class="note" style="margin:0 0 10px">Menampilkan ${L_.length} dari ${D.ac.length} pesawat</p><div class="tbl"><table><thead><tr><th>Pesawat</th><th>Kondisi / Remark</th><th>Jam terbang / Engine</th><th>Landing / Engine 1 / Engine 2 / Beban ext.</th><th>Lewat batas</th><th>Segera</th><th>Complain Pilot</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="8">${D.ac.length?"Tidak ada pesawat yang cocok. Pilih Tampilkan semua.":"Belum ada pesawat. Pilih Tambah pesawat untuk memulai."}</td></tr>`}</tbody></table></div>`},
   tasks(a){
     if(!a)return"<p>Tambahkan pesawat dulu.</p>";
@@ -685,12 +685,12 @@ views.hist=function(a){
   const rows=list.map(x=>row([esc(x.t),`<b>${esc(x.by)}</b>`,esc(x.cat),esc(x.act),esc(x.reg||"-"),`${esc(x.obj)}<small>${esc(x.sum)}</small>`])).join("");
   const body=hBusy?"<tr><td colspan=\"6\">Memuat riwayat...</td></tr>":hErr?`<tr><td colspan="6">Gagal memuat: ${esc(hErr)}</td></tr>`:(rows||`<tr><td colspan="6">${hist.length?"Tidak ada catatan yang cocok.":"Belum ada riwayat. Perubahan baru akan tercatat mulai sekarang."}</td></tr>`);
   return `<div class="tools"><button class="sec" data-act="hReload">Muat ulang</button><input id="hq" type="search" placeholder="Cari nama, objek, isi perubahan" aria-label="Cari riwayat" value="${esc(hq)}"><button class="${hAll?"sec":""}" data-act="hScope" data-id="0">${a?esc(a.reg):"Pesawat ini"}</button><button class="${hAll?"":"sec"}" data-act="hScope" data-id="1">Semua pesawat</button></div>
-<div class="seg">${chip("","Semua")}${chip("Laporan kerja","Laporan kerja")}${chip("Kondisi pesawat","Kondisi")}${chip("Jam terbang","Jam terbang")}${chip("SPK","SPK")}${chip("COMREC","COMREC")}</div>
+<div class="seg">${chip("","Semua")}${chip("Laporan kerja","Laporan kerja")}${chip("Remark/Kondisi pesawat","Remark/Kondisi")}${chip("Jam terbang","Jam terbang")}${chip("SPK","SPK")}${chip("COMREC","COMREC")}</div>
 <p class="note" style="margin:0 0 10px">Menampilkan ${list.length} dari ${hist.length} catatan terakhir (maksimal 500). Nama pengguna diambil dari nama yang diketik saat masuk atau dari akun Google.</p>
 <div class="tbl"><table><thead><tr><th>Waktu</th><th>Pengguna</th><th>Kategori</th><th>Aksi</th><th>Pesawat</th><th>Perubahan</th></tr></thead><tbody>${body}</tbody></table></div>`;
 };
 
-const FLT=["Latihan","Operasi","Angkut personel / logistik","SAR / Medevac","Test flight","Ferry flight","Cek pasca-perawatan","Lainnya"];
+const FLT=["Latihan","Operasi","Angkut personel / logistik","SAR / Medevac","Ground Run","FTF","MTF","Ferry flight","Lainnya"];
 let fl=[],flBusy=false,flErr="",ftype="",flAll=false;
 async function loadFlt(){
   const a=A();flBusy=true;flErr="";render();
@@ -780,7 +780,7 @@ $("view").onclick=async e=>{
     {k:"sig",l:"Tanda tangan (gambar dengan jari atau mouse)",t:"sig"}
   ],async o=>{if(!o.sig)throw new Error("Tanda tangan wajib diisi.");await col("wo").doc(id).update({crs:{...o,date:T(),ts:Date.now()}})})}
   else if(act==="open"){cur=id;tab="wo";render()}
-  else if(act==="cond"){const x=f("ac",id);openForm("Kondisi pesawat: "+x.reg,[{k:"cond",l:"Kondisi",t:"select",o:COND,v:x.cond||COND[0],full:1},{k:"remark",l:"Remark kondisi pesawat",t:"area",v:x.remark||"",full:1}],o=>col("ac").doc(id).update({...o,condDate:T(),condBy:me}))}
+  else if(act==="cond"){const x=f("ac",id);openForm("Remark/Kondisi pesawat: "+x.reg,[{k:"cond",l:"Remark/Kondisi",t:"select",o:COND,v:x.cond||COND[0],full:1},{k:"remark",l:"Remark kondisi pesawat",t:"area",v:x.remark||"",full:1}],o=>col("ac").doc(id).update({...o,condDate:T(),condBy:me}))}
   else if(act==="addAc")openForm("Pesawat baru",acFields(),async o=>{const r=await col("ac").add(o);cur=r.id});
   else if(act==="editAc")openForm("Ubah pesawat",acFields(f("ac",id)),o=>col("ac").doc(id).update(o));
   else if(act==="flight"){const x=f("ac",id);openForm("Tambah jam: "+x.reg,[
