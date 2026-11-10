@@ -100,11 +100,11 @@ td small,.wo p{white-space:pre-line}
 </div>
 <div class="stats">
 <div class="stat"><b id="sHrs">0</b><span>Jam terbang</span></div>
-<div class="stat"><b id="sH1">0</b><span>Jam Engine 1</span></div>
-<div class="stat"><b id="sH2">0</b><span>Jam Engine 2</span></div>
+<div class="stat"><b id="sH1">0</b><span>Jam engine 1</span></div>
+<div class="stat"><b id="sH2">0</b><span>Jam engine 2</span></div>
 <div class="stat"><b id="sCyc">0</b><span>Landing</span></div>
-<div class="stat"><b id="sE1">0</b><span>Cycle Engine 1</span></div>
-<div class="stat"><b id="sE2">0</b><span>Cycle Engine 2</span></div>
+<div class="stat"><b id="sE1">0</b><span>Cycle engine 1 (Start)</span></div>
+<div class="stat"><b id="sE2">0</b><span>Cycle engine 2 (Start)</span></div>
 <div class="stat"><b id="sEx">0</b><span>Beban eksternal</span></div>
 <div class="stat"><b id="sOver">0</b><span>Lewat batas</span></div>
 <div class="stat"><b id="sSoon">0</b><span>Segera jatuh tempo</span></div>
@@ -112,10 +112,10 @@ td small,.wo p{white-space:pre-line}
 </div></div></header>
 <div id="banner"></div>
 <nav class="wrap" id="tabs">
-<button data-tab="fleet">Noreg</button><button data-tab="remark">Complain Pilot</button><button data-tab="spk">SPK</button><button data-tab="wo">Laporan kerja</button><button data-tab="tasks">Jadwal inspeksi</button><button data-tab="dir">AD / SB / ASB</button><button data-tab="comp">COMREC</button><button data-tab="flt">Log jam terbang</button><button data-tab="hist">Riwayat</button><button data-tab="parts">Ringkasan part</button>
+<button data-tab="fleet">Noreg</button><button data-tab="remark">Complain Pilot</button><button data-tab="spk">SPK</button><button data-tab="wo">Laporan kerja</button><button data-tab="tasks">Jadwal inspeksi</button><button data-tab="dir">AD/SB/ASB</button><button data-tab="comp">COMREC</button><button data-tab="flt">Log jam terbang</button><button data-tab="hist">Riwayat</button><button data-tab="parts">Ringkasan part</button>
 </nav>
 <main class="wrap"><section class="panel" id="view"></section>
-<p class="note">Data awal hanyalah contoh. Sesuaikan semua interval dengan BHT-412-MM, pada COMREC cocokkan dengan data Mintek.</p><p class="note" id="ver" style="max-width:1040px;margin:0 auto;padding:0 16px 16px">Versi aplikasi: Riwayat perubahan, 29 Okt 2026</p></main>
+<p class="note">Data awal hanyalah contoh. Sesuaikan semua interval dengan BHT-412-MM, pada COMREC cocokkan dengan data Mintek.</p><p class="note" id="ver" style="max-width:1040px;margin:0 auto;padding:0 16px 16px">Versi aplikasi: PI 25 kelipatan dan istilah baru, 29 Okt 2026</p></main>
 
 <dialog id="ldlg"><div id="lf"><h2>Masuk ke Maintenance</h2><div id="gsec"><p style="margin:10px 0">Masuk dengan akun Google Anda. Setiap input dan perubahan data dicatat atas nama akun ini.</p><div id="gbtn" style="min-height:44px;margin:12px 0"></div></div><form id="nf" style="display:none"><p style="margin:10px 0">Isi nama Anda. Nama ini dicatat sebagai pelapor pada setiap input.</p><label style="display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px;margin-bottom:10px">Nama Anda<input id="nName" required autocomplete="name" maxlength="60"></label><button type="submit">Masuk</button></form><p id="lErr" role="alert" style="color:var(--over);margin:0 0 8px"></p></div></dialog>
 <input type="file" id="comrecFile" accept=".xlsx" hidden>
@@ -136,7 +136,7 @@ const T=()=>new Date().toISOString().slice(0,10);
 const addD=(s,n)=>{const d=new Date(s);d.setDate(d.getDate()+n);return d};
 const days=s=>Math.ceil((new Date(s)-new Date(T()))/864e5);
 let db=null,assets=null,dls=null,me="",D={ac:[],tasks:[],dir:[],wo:[],spk:[],remark:[],comp:[]},cur=null,tab="fleet",fSave=null,q="",fq="",fcond="";
-const CU={cyc:"Landing",ce1:"Cycle Engine 1",ce2:"Cycle Engine 2",cx:"Cycle beban eksternal"},CUU={cyc:"Landing",ce1:"Cycle Engine 1",ce2:"Cycle Engine 2",cx:"Cycle beban ext."};
+const CU={cyc:"Landing",ce1:"Cycle engine 1 (Start)",ce2:"Cycle engine 2 (Start)",cx:"Cycle beban eksternal"},CUU={cyc:"landing",ce1:"cycle engine 1 (Start)",ce2:"cycle engine 2 (Start)",cx:"Cycle beban ext."};
 const HU={hrs:"Airframe",eh1:"Engine 1",eh2:"Engine 2"},hKey=l=>Object.keys(HU).find(k=>HU[k]===l)||"hrs",n2=v=>(+v||0).toFixed(2);
 const cuKey=l=>Object.keys(CU).find(k=>CU[k]===l)||"cyc";
 const LBL={ok:"Aman",soon:"Segera",over:"Lewat batas",nb:"Terbuka"};
@@ -264,11 +264,27 @@ const col=c=>({
   })
 });
 const ask=m=>new Promise(r=>{const d=$("cdlg");$("cMsg").textContent=m;d.oncancel=()=>r(false);$("cYes").onclick=()=>{d.close();r(true)};$("cNo").onclick=()=>{d.close();r(false)};d.showModal()});
-const sampleTasks=[["Inspeksi 100 jam / 12 bulan","MM Bab 5",100,365],["Inspeksi 300 jam","MM Bab 5",300,0],["Inspeksi 600 jam","MM Bab 5",600,0],["Baterai ELT","MM Bab 5",0,730],["Pemeriksaan fire extinguisher","MM Bab 26",0,365]];
+const sampleTasks=[["Inspeksi 25jam","MM Bab 5",25,0]["Inspeksi 100 jam","MM Bab 5",100,0],["Inspeksi 300 jam","MM Bab 5",300,0],["Inspeksi 600 jam","MM Bab 5",600,0],["Inspeksi 600 (2) jam","MM Bab 5",1200,0],["Inspeksi 5000/5 Years jam","MM Bab 5",5000,1825]];
 
-const acFields=a=>[{k:"reg",l:"Registrasi",v:a?.reg,req:1},{k:"sn",l:"Serial number",v:a?.sn},{k:"type",l:"Tipe",t:"select",o:["412","412SP","412EP","412EPI"],v:a?.type},{k:"hrs",l:"Total jam (FH)",t:"number",step:"0.01",v:a?.hrs??0},{k:"eh1",l:"Total jam Engine 1",t:"number",step:"0.01",v:a?.eh1??0},{k:"eh2",l:"Total jam Engine 2",t:"number",step:"0.01",v:a?.eh2??0},{k:"cyc",l:"Total Landing",t:"number",v:a?.cyc??0},{k:"ce1",l:"Cycle Engine 1",t:"number",v:a?.ce1??0},{k:"ce2",l:"Cycle Engine 2",t:"number",v:a?.ce2??0},{k:"cx",l:"Cycle beban eksternal",t:"number",v:a?.cx??0}];
-function taskFields(t,a){return[{k:"name",l:"Nama tugas",v:t?.name,req:1,full:1},{k:"ref",l:"Referensi (MM / AD / SB / ASB)",v:t?.ref,full:1},{k:"hu",l:"Penghitung jam yang dipakai",t:"select",o:Object.values(HU),v:HU[t?.hu||"hrs"]},{k:"ih",l:"Interval jam",t:"number",step:"0.01",v:t?.ih||""},{k:"id_",l:"Interval hari",t:"number",v:t?.id_||""},{k:"ic",l:"Interval Cycle",t:"number",v:t?.ic||""},{k:"cu",l:"Penghitung Cycle yang dipakai",t:"select",o:Object.values(CU),v:CU[t?.cu||"cyc"]},{k:"lh",l:"Terakhir pada jam",t:"number",step:"0.01",v:t?.lh??a.hrs},{k:"ld",l:"Terakhir pada tanggal",t:"date",v:t?.ld||T()},{k:"lc",l:"Terakhir pada Cycle",t:"number",v:t?.lc??a.cyc}]}
-function dirFields(d){return[{k:"kind",l:"Jenis",t:"select",o:["AD","SB"],v:d?.kind},{k:"no",l:"Nomor",v:d?.no,req:1},{k:"title",l:"Judul / subjek",v:d?.title,req:1,full:1},{k:"dueDate",l:"Batas tanggal",t:"date",v:d?.dueDate||""},{k:"dueHrs",l:"Batas jam pesawat",t:"number",step:"0.01",v:d?.dueHrs||""},{k:"status",l:"Status",t:"select",o:["Terbuka","Selesai"],v:d?.status||"Terbuka"},{k:"doneDate",l:"Tanggal selesai",t:"date",v:d?.doneDate||""},{k:"note",l:"Catatan kepatuhan",t:"area",v:d?.note,full:1}]}
+const acFields=a=>[{k:"reg",l:"Registrasi",v:a?.reg,req:1},{k:"sn",l:"Serial number",v:a?.sn},{k:"type",l:"Tipe",t:"select",o:["412SP","412HP","412EP","412EPI"],v:a?.type},{k:"hrs",l:"Total jam (FH)",t:"number",step:"0.01",v:a?.hrs??0},{k:"eh1",l:"Total jam engine 1",t:"number",step:"0.01",v:a?.eh1??0},{k:"eh2",l:"Total jam engine 2",t:"number",step:"0.01",v:a?.eh2??0},{k:"cyc",l:"Total landing",t:"number",v:a?.cyc??0},{k:"ce1",l:"Cycle engine 1 (Start)",t:"number",v:a?.ce1??0},{k:"ce2",l:"Cycle engine 2 (Start)",t:"number",v:a?.ce2??0},{k:"cx",l:"Cycle beban eksternal",t:"number",v:a?.cx??0}];
+const RND={"":"Otomatis (PI 25 ke kelipatan 25; PI lain memakai jam aktual)",none:"Jam aktual",near:"Kelipatan terdekat",up:"Kelipatan ke atas",down:"Kelipatan ke bawah",n25:"Kelipatan 25 jam (terdekat)"};
+const RNDK=Object.fromEntries(Object.entries(RND).map(([k,v])=>[v,k]));
+const effRnd=t=>t.rnd||(/^\s*PI\s*25(?!\d)/i.test(t.name||"")?"near":"none");
+function rndHr(v,ih,m){
+  if(m==="n25"){ih=25;m="near"}
+  v=+v||0;if(!(+ih>0)||!m||m==="none")return +v.toFixed(2);
+  const f=v/ih,k=m==="up"?Math.ceil(f-1e-9):m==="down"?Math.floor(f+1e-9):Math.round(f);
+  return +(k*ih).toFixed(2);
+}
+const rndNote=t=>{const m=effRnd(t);if(m==="none"||!(+t.ih>0))return"";const st=m==="n25"?25:t.ih,w={near:"terdekat",up:"ke atas",down:"ke bawah",n25:"terdekat"}[m];return `<small>Reset ke kelipatan ${st} jam (${w})</small>`};
+function taskPayload(o,a){
+  const p={...o,cu:cuKey(o.cu),hu:hKey(o.hu),rnd:RNDK[o.rnd]||""},s=String(p.start||"").trim();delete p.start;
+  if(s){const m=s.split(/[,;\/\s]+/).map(x=>parseFloat(x)).filter(x=>!isNaN(x));
+    if(m.length){const iv=m[0],rem=m.length>1?m[1]:m[0];p.ih=iv;p.lh=+((+a[p.hu]||0)-(iv-rem)).toFixed(2);p.ld=T()}}
+  return p;
+}
+function taskFields(t,a){return[{k:"name",l:"Nama tugas",v:t?.name,req:1,full:1},{k:"ref",l:"Referensi (MM / AD/SB/ASB)",v:t?.ref,full:1},{k:"hu",l:"Penghitung jam yang dipakai",t:"select",o:Object.values(HU),v:HU[t?.hu||"hrs"]},{k:"ih",l:"Interval jam",t:"number",step:"0.01",v:t?.ih||""},{k:"id_",l:"Interval hari",t:"number",v:t?.id_||""},{k:"ic",l:"Interval Cycle",t:"number",v:t?.ic||""},{k:"cu",l:"Penghitung Cycle yang dipakai",t:"select",o:Object.values(CU),v:CU[t?.cu||"cyc"]},{k:"lh",l:"Terakhir pada jam",t:"number",step:"0.01",v:t?.lh??a.hrs},{k:"start",l:"Mulai dari: interval,sisa jam (mis. 25,25). Kosongkan bila tidak dipakai",v:""},{k:"rnd",l:"Reset saat tombol Selesai",t:"select",o:Object.values(RND),v:RND[t?.rnd||""]},{k:"ld",l:"Terakhir pada tanggal",t:"date",v:t?.ld||T()},{k:"lc",l:"Terakhir pada Cycle",t:"number",v:t?.lc??a.cyc}]}
+function dirFields(d){return[{k:"kind",l:"Jenis",t:"select",o:["AD","SB","ASB"],v:d?.kind},{k:"no",l:"Nomor",v:d?.no,req:1},{k:"title",l:"Judul / subjek",v:d?.title,req:1,full:1},{k:"dueDate",l:"Batas tanggal",t:"date",v:d?.dueDate||""},{k:"dueHrs",l:"Batas jam pesawat",t:"number",step:"0.01",v:d?.dueHrs||""},{k:"status",l:"Status",t:"select",o:["Terbuka","Selesai"],v:d?.status||"Terbuka"},{k:"doneDate",l:"Tanggal selesai",t:"date",v:d?.doneDate||""},{k:"note",l:"Catatan kepatuhan",t:"area",v:d?.note,full:1}]}
 
 function newReport(spkId,rm){
   const a=A();if(!a){tab="fleet";render();banner("Tambahkan pesawat dulu di tab Noreg.");return}
@@ -296,7 +312,7 @@ function newReport(spkId,rm){
     await col("wo").add({...o,acId:a.id,ts:Date.now()});
     if(sp&&sp.status==="Diterbitkan")await col("spk").doc(sp.id).update({status:"Dikerjakan"});
     if(rm&&rm.status==="Baru")await col("remark").doc(rm.id).update({status:"Dalam proses"});
-    if(t)await col("tasks").doc(t.id).update({lh:a[t.hu||"hrs"]||0,lc:a[t.cu||"cyc"],ld:o.date});
+    if(t)await col("tasks").doc(t.id).update({lh:rndHr(a[t.hu||"hrs"]||0,t.ih,effRnd(t)),lc:a[t.cu||"cyc"],ld:o.date});
   });
 }
 $("newWo").onclick=()=>newReport();
@@ -325,20 +341,20 @@ function fleetMatch(a){
 }
 const views={
   fleet(){
-    const L_=D.ac.filter(fleetMatch),r=L_.map(a=>{const c=counts(a);return row([`<b><span>${esc(a.reg)}</span></b>  <small>${esc(a.type)} ${esc(a.sn?"S/N "+a.sn:"")}</small>`,condCell(a),n2(a.hrs)+" jam<small>Engine 1: "+n2(a.eh1)+" | Engine 2: "+n2(a.eh2)+"</small>",a.cyc+" / "+(a.ce1||0)+" / "+(a.ce2||0)+" / "+(a.cx||0),c.o?`<span class="badge over">${c.o} lewat</span>`:"-",c.s?`<span class="badge soon">${c.s} segera</span>`:"-",rmCell(a),btn("open",a.id,"Buka",0)+" "+btn("flight",a.id,"Tambah jam")+" "+btn("cond",a.id,"Remark/Kondisi")+" "+btn("editAc",a.id,"Ubah")+" "+btn("pdfAc",a.id,"Simpan PDF")])}).join("");
-    return `<div class="tools"><button data-act="addAc">Tambah pesawat</button><input id="fsq" type="search" placeholder="Cari noreg, tipe, Kondisi/Remark, remark" aria-label="Cari noreg" value="${esc(fq)}"><select id="fcond" aria-label="Filter Kondisi/Remark" style="max-width:230px"><option value="">Semua Kondisi/Remark</option>${COND.concat(["Belum diisi"]).map(c=>`<option ${c===fcond?"selected":""}>${esc(c)}</option>`).join("")}</select><button class="sec" data-act="fAll">Tampilkan semua</button></div><p class="note" style="margin:0 0 10px">Menampilkan ${L_.length} dari ${D.ac.length} pesawat</p><div class="tbl"><table><thead><tr><th>Pesawat</th><th>Kondisi / Remark</th><th>Jam terbang / Engine</th><th>Landing / Engine 1 / Engine 2 / Beban ext.</th><th>Lewat batas</th><th>Segera</th><th>Complain Pilot</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="8">${D.ac.length?"Tidak ada pesawat yang cocok. Pilih Tampilkan semua.":"Belum ada pesawat. Pilih Tambah pesawat untuk memulai."}</td></tr>`}</tbody></table></div>`},
+    const L_=D.ac.filter(fleetMatch),r=L_.map(a=>{const c=counts(a);return row([`<b>${esc(a.reg)}</b><small>${esc(a.type)} ${esc(a.sn?"S/N "+a.sn:"")}</small>`,condCell(a),n2(a.hrs)+" jam<small>Engine 1: "+n2(a.eh1)+" | Engine 2: "+n2(a.eh2)+"</small>",a.cyc+" / "+(a.ce1||0)+" / "+(a.ce2||0)+" / "+(a.cx||0),c.o?`<span class="badge over">${c.o} lewat</span>`:"-",c.s?`<span class="badge soon">${c.s} segera</span>`:"-",rmCell(a),btn("open",a.id,"Buka",0)+" "+btn("flight",a.id,"Tambah jam")+" "+btn("cond",a.id,"Remark/Kondisi")+" "+btn("editAc",a.id,"Ubah")+" "+btn("pdfAc",a.id,"Simpan PDF")])}).join("");
+    return `<div class="tools"><button data-act="addAc">Tambah pesawat</button><input id="fsq" type="search" placeholder="Cari noreg, tipe, kondisi, remark" aria-label="Cari noreg" value="${esc(fq)}"><select id="fcond" aria-label="Filter kondisi" style="max-width:230px"><option value="">Semua kondisi</option>${COND.concat(["Belum diisi"]).map(c=>`<option ${c===fcond?"selected":""}>${esc(c)}</option>`).join("")}</select><button class="sec" data-act="fAll">Tampilkan semua</button></div><p class="note" style="margin:0 0 10px">Menampilkan ${L_.length} dari ${D.ac.length} pesawat</p><div class="tbl"><table><thead><tr><th>Pesawat</th><th>Remark/Kondisi</th><th>Jam terbang / engine</th><th>Landing / Engine 1 / Engine 2 / Beban ext.</th><th>Lewat batas</th><th>Segera</th><th>Complain Pilot</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="8">${D.ac.length?"Tidak ada pesawat yang cocok. Pilih Tampilkan semua.":"Belum ada pesawat. Pilih Tambah pesawat untuk memulai."}</td></tr>`}</tbody></table></div>`},
   tasks(a){
     if(!a)return"<p>Tambahkan pesawat dulu.</p>";
     const items=D.tasks.filter(t=>t.acId===a.id).map(t=>({t,c:calc(t,a)})).sort((x,y)=>x.c.score-y.c.score);
     const r=items.map(({t,c})=>{
       const iv=[t.ih&&t.ih+" jam"+((t.hu||"hrs")==="hrs"?"":" ("+HU[t.hu]+")"),t.id_&&t.id_+" hari",t.ic&&t.ic+" "+(CUU[t.cu||"cyc"]||"Cycle")].filter(Boolean).join(" / ")||"-";
-      return row([`${esc(t.name)}<small>${esc(t.ref)}</small>`,iv,c.r.map(x=>`<div class="rem ${x.cls}">${x.v} ${x.u}</div>`).join("")||"-",`<span class="badge ${c.st}">${LBL[c.st]}</span>`,btn("done",t.id,"Selesai",0)+" "+btn("editT",t.id,"Ubah")+" "+btn("delT",t.id,"Hapus")])}).join("");
+      return row([`${esc(t.name)}<small>${esc(t.ref)}</small>`,iv+rndNote(t),c.r.map(x=>`<div class="rem ${x.cls}">${x.v} ${x.u}</div>`).join("")||"-",`<span class="badge ${c.st}">${LBL[c.st]}</span>`,btn("done",t.id,"Selesai",0)+" "+btn("editT",t.id,"Ubah")+" "+btn("delT",t.id,"Hapus")])}).join("");
     return `<div class="tools"><button data-act="addT">Tambah tugas</button>${items.length?"":`<button class="sec" data-act="seedT">Isi tugas contoh</button>`}</div><div class="tbl"><table><thead><tr><th>Tugas</th><th>Interval</th><th>Sisa</th><th>Status</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="5">Belum ada tugas untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`},
   dir(a){
     if(!a)return"<p>Tambahkan pesawat dulu.</p>";
     const r=D.dir.filter(d=>d.acId===a.id).map(d=>({d,c:dcalc(d,a)})).sort((x,y)=>(x.c.st==="ok")-(y.c.st==="ok")).map(({d,c})=>
       row([`<b>${esc(d.kind)} ${esc(d.no)}</b>`,esc(d.title)+(d.note?`<small>${esc(d.note)}</small>`:""),`<span class="${c.st==="over"?"rem over":c.st==="soon"?"rem soon":""}">${esc(c.txt)}</span>`,`<span class="badge ${c.st}">${LBL[c.st]}</span>`,(d.status==="Selesai"?"":btn("doneD",d.id,"Selesai",0)+" ")+btn("editD",d.id,"Ubah")+" "+btn("delD",d.id,"Hapus")])).join("");
-    return `<div class="tools"><button data-act="addD">Tambah AD / SB / ASB</button></div><div class="tbl"><table><thead><tr><th>Nomor</th><th>Subjek</th><th>Batas</th><th>Status</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="5">Belum ada AD atau SB untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`},
+    return `<div class="tools"><button data-act="addD">Tambah AD/SB/ASB</button></div><div class="tbl"><table><thead><tr><th>Nomor</th><th>Subjek</th><th>Batas</th><th>Status</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="5">Belum ada AD atau SB untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`},
   wo(a){
     if(!a)return"<p>Tambahkan pesawat dulu.</p>";
     const list=woList(a);
@@ -346,7 +362,7 @@ const views={
     return `<div class="tools"><button data-act="newWo">Buat laporan kerja</button><button class="sec" data-act="pdfAll">Ekspor semua ke PDF</button><input id="q" type="search" placeholder="Cari laporan" aria-label="Cari laporan" value="${esc(q)}"></div>${r||"<p>Belum ada laporan kerja untuk "+esc(a.reg)+". Personel lapangan bisa membuatnya lewat tombol di atas.</p>"}`}
 };
 
-const SPKT=["Inspeksi terjadwal","Troubleshooting","Perbaikan","Penggantian komponen","Kepatuhan AD / SB / ASB","Lainnya"];
+const SPKT=["Inspeksi terjadwal","Troubleshooting","Perbaikan","Penggantian komponen","Kepatuhan AD/SB/ASB","Lainnya"];
 function spkSt(x){
   if(x.status==="Selesai")return["ok","Selesai"];
   if(x.status==="Dibatalkan")return["nb","Dibatalkan"];
@@ -360,8 +376,8 @@ function spkFields(x,a){
     {k:"date",l:"Tanggal terbit",t:"date",v:x?.date||T(),req:1},
     {k:"due",l:"Target selesai",t:"date",v:x?.due||""},
     {k:"type",l:"Jenis pekerjaan",t:"select",o:SPKT,v:x?.type},
-    {k:"assignee",l:"Pelaksana (nama personel)",v:x?.assignee,req:1},
-    {k:"basis",l:"Dasar pelaksanaan (AD / SB / ASB, task MM, hasil inspeksi, permintaan operasi)",t:"area",v:x?.basis,req:1,full:1},
+    {k:"assignee",l:"Pelaksana (Nama personel)",v:x?.assignee,req:1},
+    {k:"basis",l:"Dasar pelaksanaan (AD/SB/ASB, task MM, hasil inspeksi, permintaan operasi)",t:"area",v:x?.basis,req:1,full:1},
     {k:"scope",l:"Uraian pekerjaan",t:"area",v:x?.scope,req:1,full:1},
     {k:"issuer",l:"Pemberi perintah",v:x?.issuer||me,req:1},
     {k:"issuerTitle",l:"Jabatan (tampil di atas tanda tangan)",v:x?.issuerTitle,req:1},
@@ -384,7 +400,7 @@ views.remark=function(a){
   const l=D.remark.filter(x=>x.acId===a.id).sort((x,y)=>((x.status==="Selesai")-(y.status==="Selesai"))||((y.date+y.ts>x.date+x.ts)?1:-1));
   const r=l.map(x=>row([esc(x.date)+`<small>${n2(x.hrs)} jam</small>`,esc(x.pilot||"-"),esc(x.text),`<span class="badge ${RMC[x.status]||"nb"}">${esc(x.status)}</span>`,x.act?esc(x.act)+(x.closedDate?`<small>Ditutup ${esc(x.closedDate)}</small>`:""):"-",
     x.status!=="Selesai"?btn("woRm",x.id,"Buat laporan",0)+" "+(x.status==="Baru"?btn("procRm",x.id,"Proses")+" ":"")+btn("closeRm",x.id,"Selesai"):""])).join("");
-  return `<div class="tools"><button data-act="addRm">Tambah Complain Pilot</button></div><div class="tbl"><table><thead><tr><th>Tanggal</th><th>Pilot</th><th>Remark / keluhan</th><th>Status</th><th>Tindak lanjut</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="6">Belum ada Complain Pilot untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`};
+  return `<div class="tools"><button data-act="addRm">Tambah complain pilot</button></div><div class="tbl"><table><thead><tr><th>Tanggal</th><th>Pilot</th><th>Remark / keluhan</th><th>Status</th><th>Tindak lanjut</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="6">Belum ada complain pilot untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`};
 views.parts=function(a){
   const regOf=id=>(D.ac.find(x=>x.id===id)||{}).reg||"?";
   const g={};
@@ -685,12 +701,12 @@ views.hist=function(a){
   const rows=list.map(x=>row([esc(x.t),`<b>${esc(x.by)}</b>`,esc(x.cat),esc(x.act),esc(x.reg||"-"),`${esc(x.obj)}<small>${esc(x.sum)}</small>`])).join("");
   const body=hBusy?"<tr><td colspan=\"6\">Memuat riwayat...</td></tr>":hErr?`<tr><td colspan="6">Gagal memuat: ${esc(hErr)}</td></tr>`:(rows||`<tr><td colspan="6">${hist.length?"Tidak ada catatan yang cocok.":"Belum ada riwayat. Perubahan baru akan tercatat mulai sekarang."}</td></tr>`);
   return `<div class="tools"><button class="sec" data-act="hReload">Muat ulang</button><input id="hq" type="search" placeholder="Cari nama, objek, isi perubahan" aria-label="Cari riwayat" value="${esc(hq)}"><button class="${hAll?"sec":""}" data-act="hScope" data-id="0">${a?esc(a.reg):"Pesawat ini"}</button><button class="${hAll?"":"sec"}" data-act="hScope" data-id="1">Semua pesawat</button></div>
-<div class="seg">${chip("","Semua")}${chip("Laporan kerja","Laporan kerja")}${chip("Remark/Kondisi pesawat","Remark/Kondisi")}${chip("Jam terbang","Jam terbang")}${chip("SPK","SPK")}${chip("COMREC","COMREC")}</div>
+<div class="seg">${chip("","Semua")}${chip("Laporan kerja","Laporan kerja")}${chip("Kondisi pesawat","Remark/Kondisi")}${chip("Jam terbang","Jam terbang")}${chip("SPK","SPK")}${chip("COMREC","COMREC")}</div>
 <p class="note" style="margin:0 0 10px">Menampilkan ${list.length} dari ${hist.length} catatan terakhir (maksimal 500). Nama pengguna diambil dari nama yang diketik saat masuk atau dari akun Google.</p>
 <div class="tbl"><table><thead><tr><th>Waktu</th><th>Pengguna</th><th>Kategori</th><th>Aksi</th><th>Pesawat</th><th>Perubahan</th></tr></thead><tbody>${body}</tbody></table></div>`;
 };
 
-const FLT=["Latihan","Operasi","Angkut personel / logistik","SAR / Medevac","Ground Run","FTF","MTF","Ferry flight","Lainnya"];
+const FLT=["Latihan","Operasi","Angkut personel / logistik","SAR / Medevac","FTF","MTF","Ground Run","Ferry flight","Lainnya"];
 let fl=[],flBusy=false,flErr="",ftype="",flAll=false;
 async function loadFlt(){
   const a=A();flBusy=true;flErr="";render();
@@ -705,7 +721,7 @@ views.flt=function(a){
   const rows=list.map(x=>row([esc(x.d),esc(x.type||"-"),n2(x.h)+" jam"+(x.h1!==x.h||x.h2!==x.h?`<small>Engine 1: ${n2(x.h1)} | Engine 2: ${n2(x.h2)}</small>`:""),x.l,esc(x.reg||"-"),esc(x.note||"-"),esc(x.by)])).join("");
   const body=flBusy?'<tr><td colspan="7">Memuat log jam terbang...</td></tr>':flErr?`<tr><td colspan="7">Gagal memuat: ${esc(flErr)}</td></tr>`:(rows||`<tr><td colspan="7">${fl.length?"Tidak ada catatan yang cocok.":"Belum ada log. Jam yang ditambahkan mulai sekarang akan tercatat di sini."}</td></tr>`);
   return `<div class="tools"><button class="sec" data-act="fReload">Muat ulang</button><select id="ftsel" aria-label="Macam penerbangan" style="max-width:240px"><option value="">Semua macam penerbangan</option>${FLT.map(t=>`<option ${t===ftype?"selected":""}>${esc(t)}</option>`).join("")}</select><button class="${flAll?"sec":""}" data-act="fScope" data-id="0">${a?esc(a.reg):"Pesawat ini"}</button><button class="${flAll?"":"sec"}" data-act="fScope" data-id="1">Semua pesawat</button></div>
-<p class="note" style="margin:0 0 10px">Total pada tampilan: <b>${n2(tot.h)} jam</b>, ${tot.l} Landing (${list.length} catatan).${perTxt?"<br>"+perTxt:""}</p>
+<p class="note" style="margin:0 0 10px">Total pada tampilan: <b>${n2(tot.h)} jam</b>, ${tot.l} landing (${list.length} catatan).${perTxt?"<br>"+perTxt:""}</p>
 <div class="tbl"><table><thead><tr><th>Tanggal</th><th>Macam penerbangan</th><th>Jam terbang</th><th>Landing</th><th>Pesawat</th><th>Keterangan</th><th>Dicatat oleh</th></tr></thead><tbody>${body}</tbody></table></div>`;
 };
 
@@ -780,7 +796,7 @@ $("view").onclick=async e=>{
     {k:"sig",l:"Tanda tangan (gambar dengan jari atau mouse)",t:"sig"}
   ],async o=>{if(!o.sig)throw new Error("Tanda tangan wajib diisi.");await col("wo").doc(id).update({crs:{...o,date:T(),ts:Date.now()}})})}
   else if(act==="open"){cur=id;tab="wo";render()}
-  else if(act==="cond"){const x=f("ac",id);openForm("Remark/Kondisi pesawat: "+x.reg,[{k:"cond",l:"Remark/Kondisi",t:"select",o:COND,v:x.cond||COND[0],full:1},{k:"remark",l:"Remark kondisi pesawat",t:"area",v:x.remark||"",full:1}],o=>col("ac").doc(id).update({...o,condDate:T(),condBy:me}))}
+  else if(act==="cond"){const x=f("ac",id);openForm("Remark/Kondisi pesawat: "+x.reg,[{k:"cond",l:"Kondisi",t:"select",o:COND,v:x.cond||COND[0],full:1},{k:"remark",l:"Remark kondisi pesawat",t:"area",v:x.remark||"",full:1}],o=>col("ac").doc(id).update({...o,condDate:T(),condBy:me}))}
   else if(act==="addAc")openForm("Pesawat baru",acFields(),async o=>{const r=await col("ac").add(o);cur=r.id});
   else if(act==="editAc")openForm("Ubah pesawat",acFields(f("ac",id)),o=>col("ac").doc(id).update(o));
   else if(act==="flight"){const x=f("ac",id);openForm("Tambah jam: "+x.reg,[
@@ -788,19 +804,19 @@ $("view").onclick=async e=>{
     {k:"jenis",l:"Macam penerbangan / kegiatan",t:"select",o:FLT,v:FLT[0]},
     {k:"ket",l:"Keterangan (rute, misi, catatan penerbangan)",t:"area",v:"",full:1},
     {k:"h",l:"Jam terbang (airframe)",t:"number",step:"0.01",v:""},
-    {k:"h1",l:"Jam Engine 1 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
-    {k:"h2",l:"Jam Engine 2 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
-    {k:"l",l:"Landing",t:"number",v:""},{k:"e1",l:"Cycle Engine 1",t:"number",v:""},{k:"e2",l:"Cycle Engine 2",t:"number",v:""},{k:"x",l:"Cycle beban eksternal",t:"number",v:""}
+    {k:"h1",l:"Jam engine 1 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
+    {k:"h2",l:"Jam engine 2 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
+    {k:"l",l:"Landing",t:"number",v:""},{k:"e1",l:"Cycle engine 1 (Start)",t:"number",v:""},{k:"e2",l:"Cycle engine 2 (Start)",t:"number",v:""},{k:"x",l:"Cycle beban eksternal",t:"number",v:""}
   ],o=>col("ac").doc(id).inc({hrs:o.h,eh1:o.h1===""?o.h:o.h1,eh2:o.h2===""?o.h:o.h2,cyc:o.l,ce1:o.e1,ce2:o.e2,cx:o.x},{date:o.date||T(),type:o.jenis,note:o.ket}))}
-  else if(act==="addT")openForm("Tugas baru",taskFields(null,a),o=>col("tasks").add({...o,cu:cuKey(o.cu),hu:hKey(o.hu),acId:a.id}));
-  else if(act==="editT")openForm("Ubah tugas",taskFields(f("tasks",id),a),o=>col("tasks").doc(id).update({...o,cu:cuKey(o.cu),hu:hKey(o.hu)}));
+  else if(act==="addT")openForm("Tugas baru",taskFields(null,a),o=>col("tasks").add({...taskPayload(o,a),acId:a.id}));
+  else if(act==="editT")openForm("Ubah tugas",taskFields(f("tasks",id),a),o=>col("tasks").doc(id).update(taskPayload(o,a)));
   else if(act==="delT"){if(await ask("Hapus tugas ini?"))await col("tasks").doc(id).delete()}
-  else if(act==="done"){const t=f("tasks",id);if(await ask(`Tandai "${t.name}" selesai hari ini (jam ${n2(a[t.hu||"hrs"])})?`))await col("tasks").doc(id).update({lh:a[t.hu||"hrs"]||0,lc:a[t.cu||"cyc"],ld:T()})}
+  else if(act==="done"){const t=f("tasks",id),cj=+a[t.hu||"hrs"]||0,rj=rndHr(cj,t.ih,effRnd(t));if(await ask(`Tandai "${t.name}" selesai pada jam ${n2(cj)}${Math.abs(rj-cj)>0.004?`, dihitung selesai pada jam ${n2(rj)} (kelipatan ${effRnd(t)==="n25"?25:t.ih} jam)`:""}?`))await col("tasks").doc(id).update({lh:rj,lc:a[t.cu||"cyc"],ld:T()})}
   else if(act==="seedT"){for(const s of sampleTasks)await col("tasks").add({acId:a.id,name:s[0],ref:s[1],ih:s[2],id_:s[3],ic:0,lh:a.hrs,ld:T(),lc:a.cyc})}
-  else if(act==="addD")openForm("AD / SB / ASB baru",dirFields(),o=>col("dir").add({...o,acId:a.id}));
-  else if(act==="editD")openForm("Ubah AD / SB / ASB",dirFields(f("dir",id)),o=>col("dir").doc(id).update(o));
+  else if(act==="addD")openForm("AD/SB/ASB baru",dirFields(),o=>col("dir").add({...o,acId:a.id}));
+  else if(act==="editD")openForm("Ubah AD/SB/ASB",dirFields(f("dir",id)),o=>col("dir").doc(id).update(o));
   else if(act==="doneD")await col("dir").doc(id).update({status:"Selesai",doneDate:T()});
-  else if(act==="delD"){if(await ask("Hapus AD / SB / ASB ini?"))await col("dir").doc(id).delete()}
+  else if(act==="delD"){if(await ask("Hapus AD/SB/ASB ini?"))await col("dir").doc(id).delete()}
   }catch(err){banner("Gagal: "+(err.message||err.code||"akses ditolak. Anda butuh akses minimal Contributor."))}finally{busy=false;setBusy(false)}
 };
 
