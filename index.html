@@ -698,7 +698,7 @@ async function loadHist(){
 views.hist=function(a){
   const list=hist.filter(x=>(!hcat||x.cat===hcat)&&(!hq||[x.by,x.obj,x.sum,x.reg,x.act,x.cat].join(" ").toLowerCase().includes(hq)));
   const chip=(f,t)=>`<button class="sm ${hcat===f?"":"sec"}" data-act="hCat" data-id="${esc(f)}">${t}</button>`;
-  const rows=list.map(x=>row([esc(x.t),`<b>${esc(x.by)}</b>`,esc(x.cat),esc(x.act),esc(x.reg||"-"),`${esc(x.obj)}<small>${esc(x.sum)}</small>`])).join("");
+  const rows=list.map(x=>row([fmtWib(x.t)),`<b>${esc(x.by)}</b>`,esc(x.cat),esc(x.act),esc(x.reg||"-"),`${esc(x.obj)}<small>${esc(x.sum)}</small>`])).join("");
   const body=hBusy?"<tr><td colspan=\"6\">Memuat riwayat...</td></tr>":hErr?`<tr><td colspan="6">Gagal memuat: ${esc(hErr)}</td></tr>`:(rows||`<tr><td colspan="6">${hist.length?"Tidak ada catatan yang cocok.":"Belum ada riwayat. Perubahan baru akan tercatat mulai sekarang."}</td></tr>`);
   return `<div class="tools"><button class="sec" data-act="hReload">Muat ulang</button><input id="hq" type="search" placeholder="Cari nama, objek, isi perubahan" aria-label="Cari riwayat" value="${esc(hq)}"><button class="${hAll?"sec":""}" data-act="hScope" data-id="0">${a?esc(a.reg):"Pesawat ini"}</button><button class="${hAll?"":"sec"}" data-act="hScope" data-id="1">Semua pesawat</button></div>
 <div class="seg">${chip("","Semua")}${chip("Laporan kerja","Laporan kerja")}${chip("Kondisi pesawat","Remark/Kondisi")}${chip("Jam terbang","Jam terbang")}${chip("SPK","SPK")}${chip("COMREC","COMREC")}</div>
@@ -718,13 +718,18 @@ views.flt=function(a){
   const tot=list.reduce((s,x)=>({h:s.h+x.h,l:s.l+x.l}),{h:0,l:0}),per={};
   list.forEach(x=>{const k=x.type||"(tanpa macam)";per[k]=(per[k]||0)+x.h});
   const perTxt=Object.keys(per).sort((p,q)=>per[q]-per[p]).map(k=>`${esc(k)}: ${n2(per[k])} jam`).join(" | ");
-  const rows=list.map(x=>row([esc(x.d),esc(x.type||"-"),n2(x.h)+" jam"+(x.h1!==x.h||x.h2!==x.h?`<small>Engine 1: ${n2(x.h1)} | Engine 2: ${n2(x.h2)}</small>`:""),x.l,esc(x.reg||"-"),esc(x.note||"-"),esc(x.by)])).join("");
+  const rows=list.map(x=>row([fmtWib(x.d)),esc(x.type||"-"),n2(x.h)+" jam"+(x.h1!==x.h||x.h2!==x.h?`<small>Engine 1: ${n2(x.h1)} | Engine 2: ${n2(x.h2)}</small>`:""),x.l,esc(x.reg||"-"),esc(x.note||"-"),esc(x.by)])).join("");
   const body=flBusy?'<tr><td colspan="7">Memuat log jam terbang...</td></tr>':flErr?`<tr><td colspan="7">Gagal memuat: ${esc(flErr)}</td></tr>`:(rows||`<tr><td colspan="7">${fl.length?"Tidak ada catatan yang cocok.":"Belum ada log. Jam yang ditambahkan mulai sekarang akan tercatat di sini."}</td></tr>`);
   return `<div class="tools"><button class="sec" data-act="fReload">Muat ulang</button><select id="ftsel" aria-label="Macam penerbangan" style="max-width:240px"><option value="">Semua macam penerbangan</option>${FLT.map(t=>`<option ${t===ftype?"selected":""}>${esc(t)}</option>`).join("")}</select><button class="${flAll?"sec":""}" data-act="fScope" data-id="0">${a?esc(a.reg):"Pesawat ini"}</button><button class="${flAll?"":"sec"}" data-act="fScope" data-id="1">Semua pesawat</button></div>
 <p class="note" style="margin:0 0 10px">Total pada tampilan: <b>${n2(tot.h)} jam</b>, ${tot.l} landing (${list.length} catatan).${perTxt?"<br>"+perTxt:""}</p>
 <div class="tbl"><table><thead><tr><th>Tanggal</th><th>Macam penerbangan</th><th>Jam terbang</th><th>Landing</th><th>Pesawat</th><th>Keterangan</th><th>Dicatat oleh</th></tr></thead><tbody>${body}</tbody></table></div>`;
 };
-
+function fmtWib(s){
+  const m=String(s||"").match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}:\d{2}(?::\d{2})?))?/);
+  if(!m)return String(s||"");
+  const y=+m[1],mo=+m[2],d=+m[3],wd=new Date(Date.UTC(y,mo-1,d)).getUTCDay();
+  return `${HARI[wd]}, ${d} ${BLN[mo-1]} ${y}${m[4]?" "+m[4]+" WIB":""}`;
+}
 function woList(a){return D.wo.filter(w=>w.acId===a.id&&(w.title+w.finding+w.action+(w.parts||"")+(w.ata||"")+w.by).toLowerCase().includes(q)).sort((x,y)=>(y.date+y.ts>x.date+x.ts)?1:-1)}
 const blobData=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
 async function makePdf(kind,payload){
