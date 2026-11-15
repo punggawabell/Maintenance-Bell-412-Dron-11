@@ -5,7 +5,7 @@
 <meta name="theme-color" content="#17324d">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=1100, viewport-fit=cover">
 <title>Maintenance Bell 412 Dron 11</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
 <style>
@@ -40,7 +40,7 @@ main{padding:16px}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:16px}
 .tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 #view>.tools{position:sticky;top:calc(var(--tb,56px) + var(--nb,44px));z-index:20;background:var(--card);padding:8px 0;margin-top:-8px}
-@media(max-width:720px){#view>.tools{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}#view>.tools>*{flex:0 0 auto}#view>.tools input{min-width:170px}#tbar{padding:6px 12px}#tbar select{min-width:110px}#tbar button{padding:5px 10px;font-size:13px}.top{gap:6px}}
+
 .tools input{max-width:240px}
 .tbl{overflow-x:auto}
 table{width:100%;border-collapse:collapse;min-width:640px}
@@ -70,31 +70,19 @@ td small a{color:var(--acc)}
 @media(prefers-reduced-motion:no-preference){@keyframes pulse{50%{opacity:.55}}tr.hl-over .badge{animation:pulse 1.6s infinite}}
 #busy{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;padding:8px 16px;border-radius:99px;font-size:14px;display:none;z-index:50}
 td small,.wo p{white-space:pre-line}
-@media(max-width:720px){
-  #view>.tbl{overflow-x:visible}
-  #view>.tbl>table{min-width:0;display:block}
-  #view>.tbl>table thead{display:none}
-  #view>.tbl>table tbody{display:block}
-  #view>.tbl>table tr{display:block;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:12px;background:var(--card)}
-  #view>.tbl>table td{display:block;border:0;border-bottom:1px solid var(--line);padding:7px 0}
-  #view>.tbl>table td:last-child{border-bottom:0}
-  #view>.tbl>table td:last-child:not([data-l]){display:flex;flex-wrap:wrap;gap:6px;padding-top:10px}
-  #view>.tbl>table td[data-l]::before{content:attr(data-l);display:block;color:var(--mut);font-size:12px;margin-bottom:2px}
-  #view>.tbl>table td:first-child{font-size:17px;padding-top:2px}
-  #view>.tbl>table td:first-child::before{display:none}
-}
+
 #lf label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px}
 #fB .full>span{font-size:12px;color:var(--mut)}
 .prow{display:grid;grid-template-columns:2fr 1.2fr 1.2fr .8fr auto;gap:6px;margin:4px 0 6px}
 .prow input{min-width:0}
-@media(max-width:520px){.prow{grid-template-columns:1fr 1fr}.prow input[data-p="n"]{grid-column:1/-1}}
+
 .pl{margin:2px 0 6px;padding-left:20px;font-size:14px}
 .photos{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
 .photos img{height:110px;border-radius:4px;border:1px solid var(--line)}
 .crs{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;font-size:13px}
 .crs img{display:block;height:48px;background:#fff;margin-top:4px;border-radius:3px}
 #sigc{width:100%;max-width:480px;height:auto;background:#fff;border:1px solid var(--line);border-radius:4px;touch-action:none;display:block;margin-bottom:6px}
-@media(max-width:520px){#fB{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
