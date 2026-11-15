@@ -16,26 +16,31 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif}
-header{background:var(--navy);color:#fff;padding:16px}
+header{background:var(--navy);color:#fff;padding:2px 16px 10px}
+#tbar{position:sticky;top:0;z-index:30;background:var(--navy);color:#fff;padding:8px 16px;box-shadow:0 1px 0 rgba(255,255,255,.12)}
 .wrap{max-width:1040px;margin:0 auto}
 .top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
-h1{font:600 22px "IBM Plex Sans Condensed",sans-serif;margin:0}
-.stats{display:flex;flex-wrap:wrap;gap:22px;margin-top:14px}
-.stat b{display:block;font:600 24px "IBM Plex Sans Condensed",sans-serif}
-.stat span{font-size:12px;color:#b9c9d9}
+h1{font:600 18px "IBM Plex Sans Condensed",sans-serif;margin:0}
+.stats{display:flex;flex-wrap:nowrap;gap:18px;margin-top:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.stats::-webkit-scrollbar{display:none}
+.stat{flex:0 0 auto}
+.stat b{display:block;font:600 18px "IBM Plex Sans Condensed",sans-serif;line-height:1.2}
+.stat span{font-size:10.5px;color:#b9c9d9;white-space:nowrap}
 select,input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:7px 9px;width:100%}
-header select{width:auto;min-width:150px;background:#fff;color:#14212e}
+#tbar select{width:auto;min-width:150px;background:#fff;color:#14212e}
 button{font:inherit;font-weight:500;border-radius:4px;border:1px solid var(--acc);background:var(--acc);color:#fff;padding:7px 14px;cursor:pointer}
 button.sec{background:transparent;color:var(--acc)}
-header button{background:#f2b84b;border-color:#f2b84b;color:#14212e}
+#tbar button{background:#f2b84b;border-color:#f2b84b;color:#14212e}
 button.sm{padding:3px 9px;font-size:13px}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #e0a100;outline-offset:1px}
-nav{display:flex;gap:4px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--line);padding:0 8px}
+nav{display:flex;gap:4px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--line);padding:0 8px;position:sticky;top:var(--tb,56px);z-index:25}
 nav button{background:none;border:0;border-bottom:3px solid transparent;border-radius:0;color:var(--mut);padding:11px 14px;white-space:nowrap}
 nav button.on{color:var(--ink);border-bottom-color:#e0a100}
 main{padding:16px}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:16px}
 .tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+#view>.tools{position:sticky;top:calc(var(--tb,56px) + var(--nb,44px));z-index:20;background:var(--card);padding:8px 0;margin-top:-8px}
+@media(max-width:720px){#view>.tools{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}#view>.tools>*{flex:0 0 auto}#view>.tools input{min-width:170px}#tbar{padding:6px 12px}#tbar select{min-width:110px}#tbar button{padding:5px 10px;font-size:13px}.top{gap:6px}}
 .tools input{max-width:240px}
 .tbl{overflow-x:auto}
 table{width:100%;border-collapse:collapse;min-width:640px}
@@ -93,11 +98,13 @@ td small,.wo p{white-space:pre-line}
 </style>
 </head>
 <body>
-<header><div class="wrap">
+<div id="tbar"><div class="wrap">
 <div class="top">
 <h1>Maintenance Bell 412 Dron 11</h1>
 <div style="display:flex;gap:8px;flex-wrap:wrap"><select id="sel" aria-label="Pilih pesawat"></select><button id="newWo">Buat laporan kerja</button><button id="logout" type="button">Keluar</button></div>
 </div>
+</div></div>
+<header><div class="wrap">
 <div class="stats">
 <div class="stat"><b id="sHrs">0</b><span>Jam terbang</span></div>
 <div class="stat"><b id="sH1">0</b><span>Jam engine 1</span></div>
@@ -115,7 +122,7 @@ td small,.wo p{white-space:pre-line}
 <button data-tab="fleet">Noreg</button><button data-tab="remark">Complain Pilot</button><button data-tab="spk">SPK</button><button data-tab="wo">Laporan kerja</button><button data-tab="tasks">Jadwal inspeksi</button><button data-tab="dir">AD/SB/ASB</button><button data-tab="comp">COMREC</button><button data-tab="flt">Log jam terbang</button><button data-tab="hist">Riwayat</button><button data-tab="parts">Ringkasan part</button>
 </nav>
 <main class="wrap"><section class="panel" id="view"></section>
-<p class="note">Data awal hanyalah contoh. Sesuaikan semua interval dengan BHT-412-MM, pada COMREC cocokkan dengan data Mintek.</p><p class="note" id="ver" style="max-width:1040px;margin:0 auto;padding:0 16px 16px">Versi aplikasi: waktu WIB hari tanggal bulan tahun, 12 Nov 2026</p></main>
+<p class="note">Data awal hanyalah contoh. Sesuaikan semua interval dengan BHT-412-MM, pada COMREC cocokkan dengan data Mintek.</p><p class="note" id="ver" style="max-width:1040px;margin:0 auto;padding:0 16px 16px">Versi aplikasi: header tetap, koneksi stabil, 14 Nov 2026</p></main>
 
 <dialog id="ldlg"><div id="lf"><h2>Masuk ke Maintenance</h2><div id="gsec"><p style="margin:10px 0">Masuk dengan akun Google Anda. Setiap input dan perubahan data dicatat atas nama akun ini.</p><div id="gbtn" style="min-height:44px;margin:12px 0"></div></div><form id="nf" style="display:none"><p style="margin:10px 0">Isi nama Anda. Nama ini dicatat sebagai pelapor pada setiap input.</p><label style="display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px;margin-bottom:10px">Nama Anda<input id="nName" required autocomplete="name" maxlength="60"></label><button type="submit">Masuk</button></form><p id="lErr" role="alert" style="color:var(--over);margin:0 0 8px"></p></div></dialog>
 <input type="file" id="comrecFile" accept=".xlsx" hidden>
@@ -132,11 +139,11 @@ td small,.wo p{white-space:pre-line}
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const T=()=>new Date().toISOString().slice(0,10);
+const T=()=>new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Jakarta"});
 const addD=(s,n)=>{const d=new Date(s);d.setDate(d.getDate()+n);return d};
 const days=s=>Math.ceil((new Date(s)-new Date(T()))/864e5);
 let db=null,assets=null,dls=null,me="",D={ac:[],tasks:[],dir:[],wo:[],spk:[],remark:[],comp:[]},cur=null,tab="fleet",fSave=null,q="",fq="",fcond="";
-const CU={cyc:"Landing",ce1:"Cycle engine 1 (Start)",ce2:"Cycle engine 2 (Start)",cx:"Cycle beban eksternal"},CUU={cyc:"landing",ce1:"cycle engine 1 (Start)",ce2:"cycle engine 2 (Start)",cx:"Cycle beban ext."};
+const CU={cyc:"Landing",ce1:"Cycle engine 1 (Start)",ce2:"Cycle engine 2 (Start)",cx:"Siklus beban eksternal"},CUU={cyc:"landing",ce1:"cycle engine 1 (Start)",ce2:"cycle engine 2 (Start)",cx:"siklus beban ext."};
 const HU={hrs:"Airframe",eh1:"Engine 1",eh2:"Engine 2"},hKey=l=>Object.keys(HU).find(k=>HU[k]===l)||"hrs",n2=v=>(+v||0).toFixed(2);
 const cuKey=l=>Object.keys(CU).find(k=>CU[k]===l)||"cyc";
 const LBL={ok:"Aman",soon:"Segera",over:"Lewat batas",nb:"Terbuka"};
@@ -147,7 +154,7 @@ function calc(t,a){
   const r=[];
   if(+t.ih){const u=t.hu||"hrs";r.push({u:u==="hrs"?"jam":"jam "+HU[u].toLowerCase(),v:+(t.lh+t.ih-(a[u]||0)).toFixed(2),th:Math.max(t.ih*.1,5)})}
   if(+t.id_)r.push({u:"hari",v:days(addD(t.ld,t.id_)),th:30});
-  if(+t.ic){const u=t.cu||"cyc";r.push({u:CUU[u]||"Cycle",v:t.lc+t.ic-(a[u]||0),th:Math.max(t.ic*.1,10)})}
+  if(+t.ic){const u=t.cu||"cyc";r.push({u:CUU[u]||"siklus",v:t.lc+t.ic-(a[u]||0),th:Math.max(t.ic*.1,10)})}
   let st="ok",score=1e9;
   r.forEach(x=>{x.cls=x.v<0?"over":x.v<=x.th?"soon":"";if(x.v<0)st="over";else if(x.cls&&st!=="over")st="soon";score=Math.min(score,x.v/x.th)});
   return{r,st,score};
@@ -243,23 +250,34 @@ const API_URL=(window.APP_CONFIG&&window.APP_CONFIG.apiUrl)||"";
 const CLIENT_ID=(window.APP_CONFIG&&window.APP_CONFIG.clientId)||"";
 const MODE=(window.APP_CONFIG&&window.APP_CONFIG.loginMode)||((CLIENT_ID&&CLIENT_ID.indexOf("GANTI")<0)?"google":"nama");
 let AUTH={token:""},ROLE="";
+const NET_RE=/failed to fetch|networkerror|load failed|network request failed/i;
+async function fetchRetry(safe,url,opt){
+  for(let i=0;;i++){
+    try{return await fetch(url,opt)}
+    catch(e){if(!safe||i>=2||!NET_RE.test(String(e&&e.message||e)))throw e;await new Promise(r=>setTimeout(r,700*(i+1)+Math.random()*400))}
+  }
+}
+const SAFE_FN=["api_getAll","api_history","api_flights","api_getPhoto","api_getFile","api_comrecList","api_comrecGrid"];
 const gs=async(fn,...a)=>{
+  const safe=SAFE_FN.includes(fn)||(fn==="api_write"&&(a[0]==="update"||((a[0]==="add"||a[0]==="inc")&&a[4])));
   if(!API_URL||API_URL.indexOf("GANTI")>=0)throw new Error("Alamat server belum diisi. Buat atau ubah file config.js di GitHub dan isi apiUrl dengan Web app URL.");
   for(let t=0;t<2;t++){
-    const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({fn:fn,args:[AUTH,...a]})});
+    const r=await fetchRetry(safe,API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({fn:fn,args:[AUTH,...a]})});
     let j;try{j=await r.json()}catch(e){throw new Error("Server tidak merespons dengan benar. Periksa API_URL dan pastikan deployment diatur ke Anyone.")}
     if(j.ok)return j.data;
     if(j.error==="SESI_HABIS"&&t===0&&MODE!=="nama"){await reauth();continue}
     throw new Error(j.error==="SESI_HABIS"?(MODE==="nama"?"Masuk tanpa kode belum diaktifkan admin. Tambahkan Script property OPEN_ACCESS = true di Apps Script.":"Sesi berakhir. Silakan masuk lagi dengan akun Google."):j.error);
   }
 };
-let saving=false,fTok=null,busy=false,ver=0;
+let saving=false,fTok=null,busy=false,ver=0,srvVer="";
+const VER0=$("ver")?$("ver").textContent:"";
+const showSrv=r=>{srvVer=r.ver||"";if($("ver"))$("ver").textContent=VER0+" | Server: "+(srvVer||"versi lama, lakukan Deploy > New version")};
 const setBusy=on=>{$("busy").style.display=on?"block":"none"};
 const col=c=>({
   add:async o=>{ver++;const id=await gs("api_write","add",c,null,o,fTok||"");D[c].push({...o,id});render();refresh();return{id}},
   doc:id=>({
     update:async o=>{ver++;await gs("api_write","update",c,id,o);const r=D[c].find(x=>x.id===id);if(r)Object.assign(r,o);render();refresh()},
-    inc:async(o,meta)=>{ver++;await gs("api_write","inc",c,id,meta?{...o,_flight:meta}:o,fTok||"");const r=D[c].find(x=>x.id===id);if(r)Object.keys(o).forEach(k=>{r[k]=+((+r[k]||0)+(+o[k]||0)).toFixed(2)});render();refresh()},
+    inc:async(o,meta)=>{ver++;await gs("api_write","inc",c,id,meta&&srvVer?{...o,_flight:meta}:o,fTok||"");const r=D[c].find(x=>x.id===id);if(r)Object.keys(o).forEach(k=>{r[k]=+((+r[k]||0)+(+o[k]||0)).toFixed(2)});render();refresh()},
     delete:async()=>{ver++;await gs("api_write","delete",c,id,null);D[c]=D[c].filter(x=>x.id!==id);render();refresh()}
   })
 });
@@ -267,7 +285,7 @@ const ask=m=>new Promise(r=>{const d=$("cdlg");$("cMsg").textContent=m;d.oncance
 const sampleTasks=[["Inspeksi 100 jam / 12 bulan","MM Bab 5",100,365],["Inspeksi 300 jam","MM Bab 5",300,0],["Inspeksi 600 jam","MM Bab 5",600,0],["Baterai ELT","MM Bab 5",0,730],["Pemeriksaan fire extinguisher","MM Bab 26",0,365]];
 
 const acPayload=o=>{const p={...o},s=p.syncE==="Ya";delete p.syncE;if(s){p.eh1=p.hrs;p.eh2=p.hrs}return p};
-const acFields=a=>[{k:"reg",l:"Registrasi",v:a?.reg,req:1},{k:"sn",l:"Serial number",v:a?.sn},{k:"type",l:"Tipe",t:"select",o:["412","412SP","412EP","412EPI"],v:a?.type},{k:"hrs",l:"Total jam (FH)",t:"number",step:"0.01",v:a?.hrs??0},{k:"eh1",l:"Total jam engine 1",t:"number",step:"0.01",v:a?.eh1??0},{k:"eh2",l:"Total jam engine 2",t:"number",step:"0.01",v:a?.eh2??0},{k:"cyc",l:"Total landing",t:"number",v:a?.cyc??0},{k:"ce1",l:"Cycle engine 1 (Start)",t:"number",v:a?.ce1??0},{k:"ce2",l:"Cycle engine 2 (Start)",t:"number",v:a?.ce2??0},{k:"cx",l:"Cycle beban eksternal",t:"number",v:a?.cx??0},{k:"syncE",l:"Samakan jam engine 1 dan 2 dengan jam terbang saat disimpan?",t:"select",o:["Tidak","Ya"],v:"Tidak"}];
+const acFields=a=>[{k:"reg",l:"Registrasi",v:a?.reg,req:1},{k:"sn",l:"Serial number",v:a?.sn},{k:"type",l:"Tipe",t:"select",o:["412","412SP","412EP","412EPI"],v:a?.type},{k:"hrs",l:"Total jam (FH)",t:"number",step:"0.01",v:a?.hrs??0},{k:"eh1",l:"Total jam engine 1",t:"number",step:"0.01",v:a?.eh1??0},{k:"eh2",l:"Total jam engine 2",t:"number",step:"0.01",v:a?.eh2??0},{k:"cyc",l:"Total landing",t:"number",v:a?.cyc??0},{k:"ce1",l:"Cycle engine 1 (Start)",t:"number",v:a?.ce1??0},{k:"ce2",l:"Cycle engine 2 (Start)",t:"number",v:a?.ce2??0},{k:"cx",l:"Siklus beban eksternal",t:"number",v:a?.cx??0},{k:"syncE",l:"Samakan jam engine 1 dan 2 dengan jam terbang saat disimpan?",t:"select",o:["Tidak","Ya"],v:"Tidak"}];
 const RND={"":"Otomatis (PI 25 ke kelipatan 25; PI lain memakai jam aktual)",none:"Jam aktual",near:"Kelipatan terdekat",up:"Kelipatan ke atas",down:"Kelipatan ke bawah",n25:"Kelipatan 25 jam (terdekat)"};
 const RNDK=Object.fromEntries(Object.entries(RND).map(([k,v])=>[v,k]));
 const effRnd=t=>t.rnd||(/^\s*PI\s*25(?!\d)/i.test(t.name||"")?"near":"none");
@@ -284,7 +302,7 @@ function taskPayload(o,a){
     if(m.length){const iv=m[0],rem=m.length>1?m[1]:m[0];p.ih=iv;p.lh=+((+a[p.hu]||0)-(iv-rem)).toFixed(2);p.ld=T()}}
   return p;
 }
-function taskFields(t,a){return[{k:"name",l:"Nama tugas",v:t?.name,req:1,full:1},{k:"ref",l:"Referensi (MM / AD/SB/ASB)",v:t?.ref,full:1},{k:"hu",l:"Penghitung jam yang dipakai",t:"select",o:Object.values(HU),v:HU[t?.hu||"hrs"]},{k:"ih",l:"Interval jam",t:"number",step:"0.01",v:t?.ih||""},{k:"id_",l:"Interval hari",t:"number",v:t?.id_||""},{k:"ic",l:"Interval Cycle",t:"number",v:t?.ic||""},{k:"cu",l:"Penghitung Cycle yang dipakai",t:"select",o:Object.values(CU),v:CU[t?.cu||"cyc"]},{k:"lh",l:"Terakhir pada jam",t:"number",step:"0.01",v:t?.lh??a.hrs},{k:"start",l:"Mulai dari: interval,sisa jam (mis. 25,25). Kosongkan bila tidak dipakai",v:""},{k:"rnd",l:"Reset saat tombol Selesai",t:"select",o:Object.values(RND),v:RND[t?.rnd||""]},{k:"ld",l:"Terakhir pada tanggal",t:"date",v:t?.ld||T()},{k:"lc",l:"Terakhir pada Cycle",t:"number",v:t?.lc??a.cyc}]}
+function taskFields(t,a){return[{k:"name",l:"Nama tugas",v:t?.name,req:1,full:1},{k:"ref",l:"Referensi (MM / AD/SB/ASB)",v:t?.ref,full:1},{k:"hu",l:"Penghitung jam yang dipakai",t:"select",o:Object.values(HU),v:HU[t?.hu||"hrs"]},{k:"ih",l:"Interval jam",t:"number",step:"0.01",v:t?.ih||""},{k:"id_",l:"Interval hari",t:"number",v:t?.id_||""},{k:"ic",l:"Interval siklus",t:"number",v:t?.ic||""},{k:"cu",l:"Penghitung siklus yang dipakai",t:"select",o:Object.values(CU),v:CU[t?.cu||"cyc"]},{k:"lh",l:"Terakhir pada jam",t:"number",step:"0.01",v:t?.lh??a.hrs},{k:"start",l:"Mulai dari: interval,sisa jam (mis. 25,25). Kosongkan bila tidak dipakai",v:""},{k:"rnd",l:"Reset saat tombol Selesai",t:"select",o:Object.values(RND),v:RND[t?.rnd||""]},{k:"ld",l:"Terakhir pada tanggal",t:"date",v:t?.ld||T()},{k:"lc",l:"Terakhir pada siklus",t:"number",v:t?.lc??a.cyc}]}
 function dirFields(d){return[{k:"kind",l:"Jenis",t:"select",o:["AD","SB","ASB"],v:d?.kind},{k:"no",l:"Nomor",v:d?.no,req:1},{k:"title",l:"Judul / subjek",v:d?.title,req:1,full:1},{k:"dueDate",l:"Batas tanggal",t:"date",v:d?.dueDate||""},{k:"dueHrs",l:"Batas jam pesawat",t:"number",step:"0.01",v:d?.dueHrs||""},{k:"status",l:"Status",t:"select",o:["Terbuka","Selesai"],v:d?.status||"Terbuka"},{k:"doneDate",l:"Tanggal selesai",t:"date",v:d?.doneDate||""},{k:"note",l:"Catatan kepatuhan",t:"area",v:d?.note,full:1}]}
 
 function newReport(spkId,rm){
@@ -348,7 +366,7 @@ const views={
     if(!a)return"<p>Tambahkan pesawat dulu.</p>";
     const items=D.tasks.filter(t=>t.acId===a.id).map(t=>({t,c:calc(t,a)})).sort((x,y)=>x.c.score-y.c.score);
     const r=items.map(({t,c})=>{
-      const iv=[t.ih&&t.ih+" jam"+((t.hu||"hrs")==="hrs"?"":" ("+HU[t.hu]+")"),t.id_&&t.id_+" hari",t.ic&&t.ic+" "+(CUU[t.cu||"cyc"]||"Cycle")].filter(Boolean).join(" / ")||"-";
+      const iv=[t.ih&&t.ih+" jam"+((t.hu||"hrs")==="hrs"?"":" ("+HU[t.hu]+")"),t.id_&&t.id_+" hari",t.ic&&t.ic+" "+(CUU[t.cu||"cyc"]||"siklus")].filter(Boolean).join(" / ")||"-";
       return row([`${esc(t.name)}<small>${esc(t.ref)}</small>`,iv+rndNote(t),c.r.map(x=>`<div class="rem ${x.cls}">${x.v} ${x.u}</div>`).join("")||"-",`<span class="badge ${c.st}">${LBL[c.st]}</span>`,btn("done",t.id,"Selesai",0)+" "+btn("editT",t.id,"Ubah")+" "+btn("delT",t.id,"Hapus")])}).join("");
     return `<div class="tools"><button data-act="addT">Tambah tugas</button>${items.length?"":`<button class="sec" data-act="seedT">Isi tugas contoh</button>`}</div><div class="tbl"><table><thead><tr><th>Tugas</th><th>Interval</th><th>Sisa</th><th>Status</th><th></th></tr></thead><tbody>${r||`<tr><td colspan="5">Belum ada tugas untuk ${esc(a.reg)}.</td></tr>`}</tbody></table></div>`},
   dir(a){
@@ -459,7 +477,7 @@ function ccalc(c,a,pct){
       it.push({l,v,u,th,cls:v<0?"over":v<=th?"soon":"",dn:+due.toFixed(2),d:fmt(due)})}};
   add("TBO",c.tbo,+c.tso0||0,iH,nowH,"jam",5,d=>"A/C TT "+n2(d));
   add("Life limit",c.life,(c.lb==="TSO"?+c.tso0:+c.tsn0)||0,iH,nowH,"jam",5,d=>"A/C TT "+n2(d));
-  add("Life limit",c.lifeC,+c.csn0||0,iC,nowC,"Cycle",10,d=>"Cycle "+Math.round(d));
+  add("Life limit",c.lifeC,+c.csn0||0,iC,nowC,"siklus",10,d=>"siklus "+Math.round(d));
   if(+c.si>0){const s0=+c.siHr>0?+c.siHr:iH-(+c.tso0||0);add("SI",c.si,0,s0,nowH,"jam",5,d=>"A/C TT "+n2(d))}
   const dd=(l,d)=>{const v=days(d),th=P*300;it.push({l,v,u:"hari",th,cls:v<0?"over":v<=th?"soon":"",d:new Date(d).toISOString().slice(0,10)})};
   if(c.calDate)dd("Batas kalender",c.calDate);
@@ -474,17 +492,17 @@ const compFields=(x,a)=>[
   {k:"pos",l:"Posisi / lokasi",v:x?.pos},{k:"status",l:"Status",t:"select",o:["Terpasang","Dilepas"],v:x?.status||"Terpasang"},
   {k:"pn",l:"P/N",v:x?.pn},{k:"sn",l:"S/N",v:x?.sn},
   {k:"hu",l:"Penghitung jam",t:"select",o:Object.values(HU),v:HU[x?.hu||"hrs"]},
-  {k:"cu",l:"Penghitung Cycle",t:"select",o:Object.values(CU),v:CU[x?.cu||"cyc"]},
+  {k:"cu",l:"Penghitung siklus",t:"select",o:Object.values(CU),v:CU[x?.cu||"cyc"]},
   {k:"iDate",l:"Tanggal dipasang",t:"date",v:x?.iDate||T()},
   {k:"iHr",l:"Jam penghitung saat dipasang",t:"number",step:"0.01",v:x?.iHr??(a.hrs||0)},
-  {k:"iCy",l:"Cycle penghitung saat dipasang",t:"number",v:x?.iCy??(a.cyc||0)},
+  {k:"iCy",l:"Siklus penghitung saat dipasang",t:"number",v:x?.iCy??(a.cyc||0)},
   {k:"tsn0",l:"TSN saat dipasang (jam)",t:"number",step:"0.01",v:x?.tsn0||""},
   {k:"tso0",l:"TSO saat dipasang (jam)",t:"number",step:"0.01",v:x?.tso0||""},
-  {k:"csn0",l:"CSN saat dipasang (Cycle)",t:"number",v:x?.csn0||""},
+  {k:"csn0",l:"CSN saat dipasang (siklus)",t:"number",v:x?.csn0||""},
   {k:"lb",l:"Life limit dihitung dari",t:"select",o:["TSN","TSO"],v:x?.lb||"TSN"},
   {k:"tbo",l:"TBO (jam)",t:"number",step:"0.01",v:x?.tbo||""},
   {k:"life",l:"Life limit (jam)",t:"number",step:"0.01",v:x?.life||""},
-  {k:"lifeC",l:"Life limit (Cycle)",t:"number",v:x?.lifeC||""},
+  {k:"lifeC",l:"Life limit (siklus)",t:"number",v:x?.lifeC||""},
   {k:"calDate",l:"Batas kalender (tanggal habis)",t:"date",v:x?.calDate||""},
   {k:"si",l:"Interval SI (jam)",t:"number",step:"0.01",v:x?.si||""},
   {k:"siHr",l:"SI dihitung mulai jam A/C (kosong = otomatis dari TSO saat dipasang)",t:"number",step:"0.01",v:x?.siHr||""},
@@ -636,7 +654,7 @@ function compList(a){
 const compFilterText=()=>[cflt?COMPST[cflt]:"Semua",cq?'cari "'+cq+'"':"",`ambang ${cthr}%`].filter(Boolean).join(", ");
 function compExportData(a){
   const L=compList(a);
-  const head=["No","Komponen","Posisi","P/N","S/N","Status","Tgl dipasang","A/C jam saat dipasang","Current TSN (jam)","Current TSO (jam)","CSN (Cycle)","TBO (jam)","Life limit (jam)","Life limit (Cycle)","Batas kalender","SI (jam)","Remove due (A/C TT)","Time available (jam)","Batas, remove due dan sisa","Catatan"];
+  const head=["No","Komponen","Posisi","P/N","S/N","Status","Tgl dipasang","A/C jam saat dipasang","Current TSN (jam)","Current TSO (jam)","CSN (siklus)","TBO (jam)","Life limit (jam)","Life limit (siklus)","Batas kalender","SI (jam)","Remove due (A/C TT)","Time available (jam)","Batas, remove due dan sisa","Catatan"];
   const rows=L.map(({c,k},i)=>{const hi=k.it.filter(y=>y.u==="jam").sort((p,q)=>p.v-q.v)[0];
     return[i+1,c.name||"",c.pos||"",c.pn||"",c.sn||"",COMPST[k.st],c.iDate||"",+c.iHr||0,+k.tsn.toFixed(2),+k.tso.toFixed(2),k.csn,+c.tbo||0,+c.life||0,+c.lifeC||0,c.calDate||"",+c.si||0,hi?hi.dn:"",hi?hi.v:"",k.it.map(y=>y.l+": sisa "+y.v+" "+y.u+" (remove due "+y.d+")").join("; "),c.note||""]});
   return{head,rows,st:L.map(x=>x.k.st),filter:compFilterText()};
@@ -733,6 +751,14 @@ function fmtWib(s){
   const y=+m[1],mo=+m[2],d=+m[3],wd=new Date(Date.UTC(y,mo-1,d)).getUTCDay();
   return `${HARI[wd]}, ${d} ${BLN[mo-1]} ${y}${m[4]?" "+m[4]+" WIB":""}`;
 }
+function fitSticky(){
+  const r=document.documentElement.style,t=$("tbar"),n=$("tabs");
+  if(t)r.setProperty("--tb",t.offsetHeight+"px");
+  if(n)r.setProperty("--nb",n.offsetHeight+"px");
+}
+window.addEventListener("resize",fitSticky);
+if(window.ResizeObserver){const ro=new ResizeObserver(fitSticky);ro.observe($("tbar"));ro.observe($("tabs"))}
+fitSticky();
 function woList(a){return D.wo.filter(w=>w.acId===a.id&&(w.title+w.finding+w.action+(w.parts||"")+(w.ata||"")+w.by).toLowerCase().includes(q)).sort((x,y)=>(y.date+y.ts>x.date+x.ts)?1:-1)}
 const blobData=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
 async function makePdf(kind,payload){
@@ -751,7 +777,7 @@ function render(){
   const c=a?counts(a):{o:0,s:0};$("sOver").textContent=c.o;$("sSoon").textContent=c.s;$("sRm").textContent=a?D.remark.filter(x=>x.acId===a.id&&x.status!=="Selesai").length:0;
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   const fid=document.activeElement&&["q","fsq","cq","hq"].includes(document.activeElement.id)?document.activeElement.id:"";
-  $("view").innerHTML=views[tab](a);labelCells();loadPhotos();
+  $("view").innerHTML=views[tab](a);labelCells();loadPhotos();fitSticky();
   if(fid){const i=$(fid);if(i){i.focus();const n=i.value.length;i.setSelectionRange(n,n)}}
 }
 $("view").oninput=e=>{if(e.target.id==="q"){q=e.target.value.toLowerCase();render()}else if(e.target.id==="fsq"){fq=e.target.value.toLowerCase().trim();render()}else if(e.target.id==="fcond"){fcond=e.target.value;render()}else if(e.target.id==="cq"){cq=e.target.value.toLowerCase().trim();render()}else if(e.target.id==="cthr"){cthr=+e.target.value;render()}else if(e.target.id==="hq"){hq=e.target.value.toLowerCase().trim();render()}else if(e.target.id==="ftsel"){ftype=e.target.value;render()}};
@@ -815,7 +841,7 @@ $("view").onclick=async e=>{
     {k:"h",l:"Jam terbang (airframe)",t:"number",step:"0.01",v:""},
     {k:"h1",l:"Jam engine 1 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
     {k:"h2",l:"Jam engine 2 (kosong = sama dengan jam terbang)",t:"number",step:"0.01",blank:1,v:""},
-    {k:"l",l:"Landing",t:"number",v:""},{k:"e1",l:"Cycle engine 1 (Start)",t:"number",v:""},{k:"e2",l:"Cycle engine 2 (Start)",t:"number",v:""},{k:"x",l:"Cycle beban eksternal",t:"number",v:""}
+    {k:"l",l:"Landing",t:"number",v:""},{k:"e1",l:"Cycle engine 1 (Start)",t:"number",v:""},{k:"e2",l:"Cycle engine 2 (Start)",t:"number",v:""},{k:"x",l:"Siklus beban eksternal",t:"number",v:""}
   ],o=>col("ac").doc(id).inc({hrs:o.h,eh1:o.h1===""?o.h:o.h1,eh2:o.h2===""?o.h:o.h2,cyc:o.l,ce1:o.e1,ce2:o.e2,cx:o.x},{date:o.date||T(),type:o.jenis,note:o.ket}))}
   else if(act==="addT")openForm("Tugas baru",taskFields(null,a),o=>col("tasks").add({...taskPayload(o,a),acId:a.id}));
   else if(act==="editT")openForm("Ubah tugas",taskFields(f("tasks",id),a),o=>col("tasks").doc(id).update(taskPayload(o,a)));
@@ -829,9 +855,20 @@ $("view").onclick=async e=>{
   }catch(err){banner("Gagal: "+(err.message||err.code||"akses ditolak. Anda butuh akses minimal Contributor."))}finally{busy=false;setBusy(false)}
 };
 
+let refreshing=false,again=false,rfail=0;
 async function refresh(){
-  try{const v=ver,r=await gs("api_getAll");if(v!==ver)return;["ac","tasks","dir","wo","spk","remark","comp"].forEach(c=>{if(r[c])D[c]=r[c]});if(!me)me=r.me.name;render()}
-  catch(e){banner("Gagal memuat data: "+(e.message||e))}
+  if(refreshing){again=true;return}
+  refreshing=true;
+  try{
+    const v=ver,r=await gs("api_getAll");if(v!==ver)return;
+    ["ac","tasks","dir","wo","spk","remark","comp"].forEach(c=>{if(r[c])D[c]=r[c]});
+    if(!me)me=r.me.name;showSrv(r);rfail=0;
+    const b=$("banner");if(b.dataset.err){b.style.display="none";delete b.dataset.err}
+    render();
+  }catch(e){
+    rfail++;
+    if(rfail>=2){banner("Gagal memuat data: "+(e.message||e)+". Mencoba lagi otomatis.");$("banner").dataset.err="1"}
+  }finally{refreshing=false;if(again){again=false;refresh()}}
 }
 const photoCache={};
 function loadPhotos(){
@@ -846,7 +883,7 @@ async function startSession(){
   try{
     const r=await gs("api_getAll");
     ["ac","tasks","dir","wo","spk","remark","comp"].forEach(c=>D[c]=r[c]);
-    me=r.me.name;ROLE=r.me.role;
+    me=r.me.name;ROLE=r.me.role;showSrv(r);
     $("logout").textContent="Keluar ("+(r.me.name||r.me.email)+")";
     $("lErr").textContent="";$("ldlg").close();render();
     if(ROLE==="Viewer")banner("Anda masuk sebagai Viewer (hanya dapat membaca).");
@@ -885,7 +922,8 @@ $("nf").onsubmit=e=>{e.preventDefault();const n=$("nName").value.trim();if(!n)re
   AUTH={name:n};$("lErr").textContent="Memeriksa...";startSession()};
 render();
 if(MODE==="nama")initNama();else if(window.gisReady)window.initGis();
-setInterval(()=>{if((AUTH.token||AUTH.name)&&!$("dlg").open&&!$("cdlg").open)refresh()},20000);
+setInterval(()=>{if(document.hidden)return;if((AUTH.token||AUTH.name)&&!$("dlg").open&&!$("cdlg").open)refresh()},40000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&AUTH&&(AUTH.token||AUTH.name||AUTH.code)&&!$("dlg").open)refresh()});
 </script>
 </body>
 </html>
