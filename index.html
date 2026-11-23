@@ -1002,7 +1002,10 @@ views.dash=a=>{
   let head;
   if(!a)head=`<div class="dc full"><h2>Belum ada pesawat</h2><p>Buka Menu, pilih Data pesawat (Noreg), lalu Tambah pesawat.</p></div>`;
   else{const it=D.tasks.filter(t=>t.acId===a.id).map(t=>({t,c:calc(t,a)})).filter(x=>x.c.r.length).sort((p,q)=>p.c.score-q.c.score)[0];
-    const ni=it?(()=>{const r=it.c.r.slice().sort((p,q)=>p.v/p.th-q.v/q.th)[0],col={over:"#ff8a80",soon:"#f2b84b",ok:"#5fd29a"}[it.c.st];return `<span class="dd" style="color:${col};text-align:right">${esc(it.t.name)} · ${r.v<0?"lewat "+Math.abs(r.v):"sisa "+r.v} ${r.u}</span>`})():`<span class="dd" style="color:#93a2b1">Belum ada tugas</span>`;
+    const tl=it?(()=>{const r=it.c.r.slice().sort((p,q)=>p.v/p.th-q.v/q.th)[0],col={over:"#ff8a80",soon:"#f2b84b",ok:"#5fd29a"}[it.c.st];return `<div style="color:${col}">${esc(it.t.name)} · ${r.v<0?"lewat "+Math.abs(r.v):"sisa "+r.v} ${r.u}</div>`})():`<div style="color:#93a2b1">Belum ada tugas</div>`;
+    const cw=D.comp.filter(c=>c.acId===a.id&&c.status!=="Dilepas").map(c=>ccalc(c,a,10).st).filter(z=>z==="over"||z==="soon");
+    const cl=cw.length?`<div style="color:${cw.includes("over")?"#ff8a80":"#f2b84b"}">Check COMREC · ${cw.length} item</div>`:"";
+    const ni=`<span class="dd" style="text-align:right">${tl}${cl}</span>`;
     head=`<div class="dc"><div class="reg"><b>${esc(a.reg)}</b>${bdg(a)}</div><small style="color:#8fb3d9">Bell ${esc(a.type)}${a.sn?" · S/N "+esc(a.sn):""}</small>
     <div class="kv" style="margin-top:10px"><span>Aircraft Hours</span><b>${n2(a.hrs)}</b></div><div class="kv"><span>Next Inspection</span>${ni}</div></div>
     <div><div class="g2"><div class="hc"><small>ENGINE 1</small><b>${n2(a.eh1)}</b><small>Hours</small></div><div class="hc"><small>ENGINE 2</small><b>${n2(a.eh2)}</b><small>Hours</small></div></div>
