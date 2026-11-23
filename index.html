@@ -5,7 +5,7 @@
 <meta name="theme-color" content="#17324d">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="viewport" content="width=720, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Maintenance Bell 412 Dron 11</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
 <style>
@@ -83,6 +83,76 @@ td small,.wo p{white-space:pre-line}
 .crs img{display:block;height:48px;background:#fff;margin-top:4px;border-radius:3px}
 #sigc{width:100%;max-width:480px;height:auto;background:#fff;border:1px solid var(--line);border-radius:4px;touch-action:none;display:block;margin-bottom:6px}
 
+
+/* ===== Desain baru: Maintenance Control ===== */
+:root{--navy:#0B1726;--gold:#DDAA45}
+.fsum{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:0 0 14px}
+.fk{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--mut);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column}
+.fk b{font-size:26px;line-height:1.1}.fk span{font-size:13px;color:var(--mut)}
+.fk.ok{border-left-color:var(--ok)}.fk.ok b{color:var(--ok)}
+.fk.soon{border-left-color:var(--soon)}.fk.soon b{color:var(--soon)}
+.fk.over{border-left-color:var(--over)}.fk.over b{color:var(--over)}
+#bnav,#drawer{display:none}
+@media(max-width:720px){#view>.tools{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}#view>.tools>*{flex:0 0 auto}#view>.tools input{min-width:170px}#tbar{padding:6px 12px}#tbar select{min-width:110px}#tbar button{padding:5px 10px;font-size:13px}.top{gap:6px}}
+@media(max-width:720px){
+  #view>.tbl{overflow-x:visible}
+  #view>.tbl>table{min-width:0;display:block}
+  #view>.tbl>table thead{display:none}
+  #view>.tbl>table tbody{display:block}
+  #view>.tbl>table tr{display:block;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:12px;background:var(--card)}
+  #view>.tbl>table td{display:block;border:0;border-bottom:1px solid var(--line);padding:7px 0}
+  #view>.tbl>table td:last-child{border-bottom:0}
+  #view>.tbl>table td:last-child:not([data-l]){display:flex;flex-wrap:wrap;gap:6px;padding-top:10px}
+  #view>.tbl>table td[data-l]::before{content:attr(data-l);display:block;color:var(--mut);font-size:12px;margin-bottom:2px}
+  #view>.tbl>table td:first-child{font-size:17px;padding-top:2px}
+  #view>.tbl>table td:first-child::before{display:none}
+}
+@media(max-width:520px){.prow{grid-template-columns:1fr 1fr}.prow input[data-p="n"]{grid-column:1/-1}}
+@media(max-width:520px){#fB{grid-template-columns:1fr}}
+@media(max-width:720px){
+#tabs{display:none}
+body{padding-bottom:78px}
+.fsum{grid-template-columns:repeat(3,1fr);gap:8px}.fk{padding:9px 10px;border-radius:12px}.fk b{font-size:22px}.fk span{font-size:12px}
+#bnav{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--navy);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -1px 0 rgba(255,255,255,.14)}
+#bnav button{background:none;border:0;color:#c9d4df;font:inherit;font-size:13px;min-height:48px;border-radius:12px}
+#bnav button.on{background:rgba(221,170,69,.18);color:var(--gold);font-weight:700}
+#drawer:not([hidden]){display:block;position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--card);border-radius:18px 18px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.4)}
+#drawer{max-height:80vh;overflow:auto}#drawer h3{margin:10px 0 6px;font-size:13px;color:var(--mut)}
+#drawer button{display:block;width:100%;text-align:left;min-height:50px;margin:0 0 8px;border-radius:12px;font-size:16px}
+#busy{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+.tools button,.tools select,.tools input{min-height:46px}
+#view>.tbl>table tr{border-radius:14px;margin-bottom:12px}
+}
+
+/* ===== Dashboard Maintenance Control ===== */
+body.isdash{background:#0B1726;color:#e6ecf2}
+.isdash header,.isdash #newWo,.isdash #tbar .top h1{display:none}
+.isdash #tbar{padding:8px 16px}
+.isdash #view{background:transparent;border:0;box-shadow:none;padding:0}
+.isdash nav{background:#0B1726;border-color:#243447}.isdash nav button{color:#c9d4df}.isdash nav button.on{color:#DDAA45;border-color:#DDAA45}
+.dash{display:grid;gap:14px;grid-template-columns:1fr;font-size:15px}
+.dash .dc{background:#17283A;border:1px solid #243447;border-radius:14px;padding:14px}
+.dash h2{font-size:17px;margin:0 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.dash h2 small{font-size:13px;font-weight:400;color:#93a2b1}
+.dash .brand{font-size:12px;color:#8fb3d9;letter-spacing:.04em}.dash .brand b{display:block;font-size:22px;color:#fff;letter-spacing:0}
+.dash .reg{display:flex;justify-content:space-between;align-items:center;gap:8px}.dash .reg b{font-size:24px}
+.dash .kv{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid #243447}.dash .kv b{font-size:26px}.dash .kv .dd{font-weight:700}
+.dash .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dash .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.dash .hc{background:#17283A;border:1px solid #243447;border-radius:14px;padding:12px}.dash .hc small{display:block;color:#93a2b1;font-size:12px}.dash .hc b{font-size:26px;display:block;margin:2px 0}
+.dash .g4 .hc b{font-size:20px}
+.dash .qa button{min-height:52px;border-radius:14px;font-size:15px;font-weight:700;border:0;background:#26394d;color:#fff;width:100%;padding:8px}
+.dash .qa button.gold{background:#DDAA45;color:#0B1726}
+.dash .fs{border-radius:14px;padding:12px;text-align:center}.dash .fs b{display:block;font-size:26px}.dash .fs span{font-size:13px}
+.fs.ok{background:#173D35;color:#5fd29a}.fs.soon{background:#4a3a1e;color:#f2b84b}.fs.over{background:#4a2429;color:#ff8a80}.fs.un{background:#3a2530;color:#ff8a80}
+.dash .badge.ok{background:#173D35;color:#5fd29a}.dash .badge.soon{background:#4a3a1e;color:#f2b84b}.dash .badge.over{background:#4a2429;color:#ff8a80}.dash .badge.nb{background:#243447;color:#c9d4df}
+.dash .al{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid #243447}.dash .al small{color:#93a2b1;display:block}
+.dash input,.dash select{min-height:46px;background:#0f1d2d;color:#fff;border:1px solid #2b3947;border-radius:12px;padding:0 12px;width:100%}
+.dash .srch{display:grid;gap:8px;grid-template-columns:2fr 1fr;margin-bottom:10px}
+.dash details{border-top:1px solid #243447}.dash summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:12px 0}
+.dash summary::-webkit-details-marker{display:none}.dash summary small{grid-column:1/-1;color:#93a2b1}
+.dash .acd{padding:0 0 12px;color:#c9d4df;display:grid;gap:6px}.dash .acd .bt{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+@media(min-width:900px){.dash{grid-template-columns:1fr 1fr}.dash .full{grid-column:1/-1}}
+@media(max-width:720px){.dash .g4{grid-template-columns:1fr 1fr}.dash .srch{grid-template-columns:1fr}.isdash #tbar .top{flex-wrap:nowrap}}
 </style>
 </head>
 <body>
@@ -107,7 +177,7 @@ td small,.wo p{white-space:pre-line}
 </div></div></header></div>
 <div id="banner"></div>
 <nav class="wrap" id="tabs">
-<button data-tab="fleet">Noreg</button><button data-tab="remark">Complain Pilot</button><button data-tab="spk">SPK</button><button data-tab="wo">Laporan kerja</button><button data-tab="tasks">Jadwal inspeksi</button><button data-tab="dir">AD/SB/ASB</button><button data-tab="comp">COMREC</button><button data-tab="flt">Log jam terbang</button><button data-tab="hist">Riwayat</button><button data-tab="parts">Ringkasan part</button>
+<button data-tab="dash">Dashboard</button><button data-tab="fleet">Noreg</button><button data-tab="remark">Complain Pilot</button><button data-tab="spk">SPK</button><button data-tab="wo">Laporan kerja</button><button data-tab="tasks">Jadwal inspeksi</button><button data-tab="dir">AD/SB/ASB</button><button data-tab="comp">COMREC</button><button data-tab="flt">Log jam terbang</button><button data-tab="hist">Riwayat</button><button data-tab="parts">Ringkasan part</button>
 </nav>
 <main class="wrap"><section class="panel" id="view"></section>
 <p class="note">Data awal hanyalah contoh. Sesuaikan semua interval dengan BHT-412-MM, pada COMREC cocokkan dengan data Mintek.</p><p class="note" id="ver" style="max-width:1040px;margin:0 auto;padding:0 16px 16px">Versi aplikasi: header tetap, koneksi stabil, 14 Nov 2026</p></main>
@@ -130,7 +200,7 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const T=()=>new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Jakarta"});
 const addD=(s,n)=>{const d=new Date(s);d.setDate(d.getDate()+n);return d};
 const days=s=>Math.ceil((new Date(s)-new Date(T()))/864e5);
-let db=null,assets=null,dls=null,me="",D={ac:[],tasks:[],dir:[],wo:[],spk:[],remark:[],comp:[]},cur=null,tab="fleet",fSave=null,q="",fq="",fcond="";
+let db=null,assets=null,dls=null,me="",D={ac:[],tasks:[],dir:[],wo:[],spk:[],remark:[],comp:[]},cur=null,tab="dash",fSave=null,q="",fq="",fcond="";
 const CU={cyc:"Landing",ce1:"Cycle engine 1 (Start)",ce2:"Cycle engine 2 (Start)",cx:"Siklus beban eksternal"},CUU={cyc:"landing",ce1:"cycle engine 1 (Start)",ce2:"cycle engine 2 (Start)",cx:"siklus beban ext."};
 const HU={hrs:"Airframe",eh1:"Engine 1",eh2:"Engine 2"},hKey=l=>Object.keys(HU).find(k=>HU[k]===l)||"hrs",n2=v=>(+v||0).toFixed(2);
 const cuKey=l=>Object.keys(CU).find(k=>CU[k]===l)||"cyc";
@@ -766,7 +836,7 @@ function render(){
   const c=a?counts(a):{o:0,s:0};$("sOver").textContent=c.o;$("sSoon").textContent=c.s;$("sRm").textContent=a?D.remark.filter(x=>x.acId===a.id&&x.status!=="Selesai").length:0;
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   const fid=document.activeElement&&["q","fsq","cq","hq"].includes(document.activeElement.id)?document.activeElement.id:"";
-  $("view").innerHTML=views[tab](a);labelCells();loadPhotos();fitSticky();
+  $("view").innerHTML=(views[tab]||views.fleet)(a);labelCells();loadPhotos();fitSticky();dash();
   if(fid){const i=$(fid);if(i){i.focus();const n=i.value.length;i.setSelectionRange(n,n)}}
 }
 $("view").oninput=e=>{if(e.target.id==="q"){q=e.target.value.toLowerCase();render()}else if(e.target.id==="fsq"){fq=e.target.value.toLowerCase().trim();render()}else if(e.target.id==="fcond"){fcond=e.target.value;render()}else if(e.target.id==="cq"){cq=e.target.value.toLowerCase().trim();render()}else if(e.target.id==="cthr"){cthr=+e.target.value;render()}else if(e.target.id==="hq"){hq=e.target.value.toLowerCase().trim();render()}else if(e.target.id==="ftsel"){ftype=e.target.value;render()}};
@@ -913,6 +983,51 @@ render();
 if(MODE==="nama")initNama();else if(window.gisReady)window.initGis();
 setInterval(()=>{if(document.hidden)return;if((AUTH.token||AUTH.name)&&!$("dlg").open&&!$("cdlg").open)refresh()},40000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&AUTH&&(AUTH.token||AUTH.name||AUTH.code)&&!$("dlg").open)refresh()});
+
+function dash(){
+  document.body.classList.toggle("isdash",tab==="dash");
+  document.querySelectorAll("#bnav button[data-go]").forEach(b=>b.classList.toggle("on",b.dataset.go===tab));
+}
+views.dash=a=>{
+  const A_=id=>D.ac.find(x=>x.id===id),nm=o=>esc(o.name||o.title||o.item||o.text||o.desc||o.ref||o.note||"-");
+  let sv=0,un=0,so=0,ov=0;D.ac.forEach(x=>{const i=COND.indexOf(x.cond);if(i===0)sv++;if(i===3)un++;const c=counts(x);so+=c.s;ov+=c.o});
+  const al=[];
+  D.tasks.forEach(t=>{const x=A_(t.acId);if(!x)return;const s=calc(t,x).st;if(s==="over"||s==="soon")al.push([s,"Inspeksi",nm(t),x.reg])});
+  D.dir.forEach(d=>{const x=A_(d.acId);if(!x)return;const s=dcalc(d,x).st;if(s==="over"||s==="soon")al.push([s,"AD/SB/ASB",nm(d),x.reg])});
+  D.comp.filter(c=>c.status!=="Dilepas").forEach(c=>{const x=A_(c.acId);if(!x)return;const s=ccalc(c,x,10).st;if(s==="over"||s==="soon")al.push([s,"COMREC",nm(c),x.reg])});
+  D.remark.filter(r=>r.status!=="Selesai").forEach(r=>{const x=A_(r.acId);if(x)al.push(["open","Temuan belum ditutup",nm(r),x.reg])});
+  const ord={over:0,soon:1,open:2},lb={over:"Lewat batas",soon:"Segera",open:"Terbuka"},bc={over:"over",soon:"soon",open:"nb"};
+  al.sort((p,q)=>ord[p[0]]-ord[q[0]]);
+  const bdg=x=>x.cond?`<span class="badge ${CONDC[COND.indexOf(x.cond)]||"nb"}">${esc(x.cond)}</span>`:`<span class="badge nb">Belum diisi</span>`;
+  let head;
+  if(!a)head=`<div class="dc full"><h2>Belum ada pesawat</h2><p>Buka Menu, pilih Data pesawat (Noreg), lalu Tambah pesawat.</p></div>`;
+  else{const c=counts(a),ni=c.o?`<span class="dd" style="color:#ff8a80">${c.o} Overdue</span>`:c.s?`<span class="dd" style="color:#f2b84b">${c.s} Due Soon</span>`:`<span class="dd" style="color:#5fd29a">Aman</span>`;
+    head=`<div class="dc"><div class="reg"><b>${esc(a.reg)}</b>${bdg(a)}</div><small style="color:#8fb3d9">Bell ${esc(a.type)}${a.sn?" · S/N "+esc(a.sn):""}</small>
+    <div class="kv" style="margin-top:10px"><span>Aircraft Hours</span><b>${n2(a.hrs)}</b></div><div class="kv"><span>Next Inspection</span>${ni}</div></div>
+    <div><div class="g2"><div class="hc"><small>ENGINE 1</small><b>${n2(a.eh1)}</b><small>Hours</small></div><div class="hc"><small>ENGINE 2</small><b>${n2(a.eh2)}</b><small>Hours</small></div></div>
+    <div class="g4" style="margin-top:8px"><div class="hc"><small>Landing</small><b>${a.cyc||0}</b></div><div class="hc"><small>Cycle E1</small><b>${a.ce1||0}</b></div><div class="hc"><small>Cycle E2</small><b>${a.ce2||0}</b></div><div class="hc"><small>Beban ext.</small><b>${a.cx||0}</b></div></div></div>
+    <div class="qa g2 full"><button class="gold" data-act="flight" data-id="${a.id}">Input Jam Terbang</button><button data-go="tasks">Inspeksi</button><button data-go="remark">Input Complaint Pilot</button><button data-act="cond" data-id="${a.id}">Input Maintenance</button></div>`}
+  const fs=(n,l,c)=>`<div class="fs ${c}"><b>${n}</b><span>${l}</span></div>`;
+  const rows=D.ac.filter(fleetMatch).map(x=>{const c=counts(x),d=c.o+c.s;return `<details><summary><b>${esc(x.reg)}</b>${bdg(x)}<small>${n2(x.hrs)} FH · ${c.o?c.o+" overdue · ":""}${c.s} due soon</small></summary><div class="acd">
+   <div>Bell ${esc(x.type)}${x.sn?" · S/N "+esc(x.sn):""}</div>${x.remark?`<div>${esc(x.remark)}</div>`:""}<div>Engine 1: ${n2(x.eh1)} · Engine 2: ${n2(x.eh2)}</div><div>Landing ${x.cyc||0} · Cycle E1 ${x.ce1||0} · E2 ${x.ce2||0} · Beban ${x.cx||0}</div>
+   <div class="bt"><button class="sm" data-pick="${x.id}">Pilih</button>${btn("open",x.id,"Buka",0)}${btn("flight",x.id,"Tambah jam")}${btn("cond",x.id,"Remark/Kondisi")}${btn("editAc",x.id,"Ubah")}${btn("pdfAc",x.id,"Simpan PDF")}</div></div></details>`}).join("");
+  return `<div class="dash"><div class="brand full">MAINTENANCE CONTROL<b>Bell 412 Fleet</b></div>${head}
+  <div class="dc"><h2>Fleet Status</h2><div class="g2">${fs(sv,"Serviceable","ok")}${fs(un,"Unserviceable","un")}${fs(so,"Due Soon","soon")}${fs(ov,"Overdue","over")}</div></div>
+  <div class="dc"><h2>Maintenance Alert<small>${al.length} item</small></h2>${al.slice(0,8).map(x=>`<div class="al"><span class="badge ${bc[x[0]]}">${lb[x[0]]}</span><div>${x[2]}<small>${x[1]} · ${esc(x[3])}</small></div></div>`).join("")||"<p style='color:#93a2b1'>Tidak ada peringatan.</p>"}${al.length>8?`<p style="color:#93a2b1">+${al.length-8} lainnya, buka Jadwal inspeksi.</p>`:""}</div>
+  <div class="dc full"><h2>Fleet Aircraft<small>${D.ac.length} Aircraft</small></h2><div class="srch"><input id="fsq" type="search" placeholder="Cari noreg, tipe, kondisi" aria-label="Cari noreg" value="${esc(fq)}"><select id="fcond" aria-label="Filter kondisi"><option value="">Semua kondisi</option>${COND.concat(["Belum diisi"]).map(c=>`<option ${c===fcond?"selected":""}>${esc(c)}</option>`).join("")}</select></div>${rows||"<p style='color:#93a2b1'>Tidak ada pesawat yang cocok.</p>"}</div></div>`;
+};
+(function(){
+  const bn=document.createElement("div");bn.id="bnav";
+  bn.innerHTML='<button data-go="dash">Dashboard</button><button data-go="wo">Laporan</button><button data-go="tasks">Inspeksi</button><button data-go="menu">Menu</button>';
+  const dr=document.createElement("div");dr.id="drawer";dr.hidden=true;document.body.append(bn,dr);
+  const go=t=>{if(t==="newWo")return $("newWo").click();const b=document.querySelector('#tabs button[data-tab="'+t+'"]');if(b)b.click()};
+  const G=[["Dashboard",[["dash","Ringkasan fleet dan alert"]]],["Maintenance",[["wo","Laporan kerja"],["spk","SPK"],["remark","Complain Pilot"]]],["Planning",[["tasks","Jadwal inspeksi"]]],["Technical",[["dir","AD/SB/ASB"],["comp","COMREC"],["flt","Log jam terbang"],["hist","Riwayat"],["parts","Ringkasan part"]]],["Administration",[["fleet","Data pesawat (Noreg)"],["out","Keluar"]]]];
+  bn.onclick=e=>{const b=e.target.closest("button");if(!b)return;
+    if(b.dataset.go==="menu"){dr.innerHTML=G.map(g=>`<h3>${g[0]}</h3>`+g[1].map(i=>`<button data-t="${i[0]}" class="${i[0]===tab?"":"sec"}">${i[1]}</button>`).join("")).join("")+'<button class="sec" data-t="">Tutup</button>';dr.hidden=false}
+    else go(b.dataset.go)};
+  dr.onclick=e=>{const b=e.target.closest("button");if(!b)return;dr.hidden=true;if(b.dataset.t==="out")$("logout").click();else if(b.dataset.t)go(b.dataset.t)};
+  $("view").addEventListener("click",e=>{const b=e.target.closest("[data-go],[data-pick]");if(!b)return;if(b.dataset.pick){cur=b.dataset.pick;render()}else go(b.dataset.go)});
+})();
 </script>
 </body>
 </html>
