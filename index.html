@@ -210,7 +210,7 @@ const banner=m=>{$("banner").textContent=m;$("banner").style.display="block"};
 
 function calc(t,a){
   const r=[];
-  if(+t.ih){const u=t.hu||"hrs";r.push({u:u==="hrs"?"jam":"jam "+HU[u].toLowerCase(),v:+(t.lh+t.ih-(a[u]||0)).toFixed(2),th:Math.max(t.ih*.1,5)})}
+  if(+t.ih){const u=t.hu||"hrs";r.push({u:u==="hrs"?"jam":"jam "+HU[u].toLowerCase(),v:+(t.lh+t.ih-(a[u]||0)).toFixed(2),th:/PI\s*25(?!\d)/i.test(t.name||"")?5:Math.max(t.ih*.1,5)})}
   if(+t.id_)r.push({u:"hari",v:days(addD(t.ld,t.id_)),th:30});
   if(+t.ic){const u=t.cu||"cyc";r.push({u:CUU[u]||"siklus",v:t.lc+t.ic-(a[u]||0),th:Math.max(t.ic*.1,10)})}
   let st="ok",score=1e9;
@@ -1001,7 +1001,8 @@ views.dash=a=>{
   const bdg=x=>x.cond?`<span class="badge ${CONDC[COND.indexOf(x.cond)]||"nb"}">${esc(x.cond)}</span>`:`<span class="badge nb">Belum diisi</span>`;
   let head;
   if(!a)head=`<div class="dc full"><h2>Belum ada pesawat</h2><p>Buka Menu, pilih Data pesawat (Noreg), lalu Tambah pesawat.</p></div>`;
-  else{const c=counts(a),ni=c.o?`<span class="dd" style="color:#ff8a80">${c.o} Overdue</span>`:c.s?`<span class="dd" style="color:#f2b84b">${c.s} Due Soon</span>`:`<span class="dd" style="color:#5fd29a">Aman</span>`;
+  else{const it=D.tasks.filter(t=>t.acId===a.id).map(t=>({t,c:calc(t,a)})).filter(x=>x.c.r.length).sort((p,q)=>p.c.score-q.c.score)[0];
+    const ni=it?(()=>{const r=it.c.r.slice().sort((p,q)=>p.v/p.th-q.v/q.th)[0],col={over:"#ff8a80",soon:"#f2b84b",ok:"#5fd29a"}[it.c.st];return `<span class="dd" style="color:${col};text-align:right">${esc(it.t.name)} · ${r.v<0?"lewat "+Math.abs(r.v):"sisa "+r.v} ${r.u}</span>`})():`<span class="dd" style="color:#93a2b1">Belum ada tugas</span>`;
     head=`<div class="dc"><div class="reg"><b>${esc(a.reg)}</b>${bdg(a)}</div><small style="color:#8fb3d9">Bell ${esc(a.type)}${a.sn?" · S/N "+esc(a.sn):""}</small>
     <div class="kv" style="margin-top:10px"><span>Aircraft Hours</span><b>${n2(a.hrs)}</b></div><div class="kv"><span>Next Inspection</span>${ni}</div></div>
     <div><div class="g2"><div class="hc"><small>ENGINE 1</small><b>${n2(a.eh1)}</b><small>Hours</small></div><div class="hc"><small>ENGINE 2</small><b>${n2(a.eh2)}</b><small>Hours</small></div></div>
