@@ -18,7 +18,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif}
 header{background:var(--navy);color:#fff;padding:0 0 10px}
 #tbar{position:sticky;top:0;z-index:30;background:var(--navy);color:#fff;padding:8px 16px;box-shadow:0 1px 0 rgba(255,255,255,.12)}
-.wrap{max-width:1040px;margin:0 auto}
+.wrap{max-width:1800px;margin:0 auto}
 .top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
 h1{font:600 18px "IBM Plex Sans Condensed",sans-serif;margin:0}
 .stats{display:flex;flex-wrap:nowrap;gap:18px;margin-top:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -152,6 +152,7 @@ body.isdash{background:#0B1726;color:#e6ecf2}
 .dash summary::-webkit-details-marker{display:none}.dash summary small{grid-column:1/-1;color:#93a2b1}
 .dash .acd{padding:0 0 12px;color:#c9d4df;display:grid;gap:6px}.dash .acd .bt{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 @media(min-width:900px){.dash{grid-template-columns:1fr 1fr}.dash .full{grid-column:1/-1}}
+  @media(min-width:1280px){.dash{grid-template-columns:1fr 1fr 1fr}.dash>.qa.full{grid-column:auto}.dash>:nth-child(6){grid-column:span 2}}
 @media(max-width:720px){.dash .g4{grid-template-columns:1fr 1fr}.dash .srch{grid-template-columns:1fr}.isdash #tbar .top{flex-wrap:nowrap}}
 </style>
 </head>
