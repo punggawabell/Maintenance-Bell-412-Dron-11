@@ -575,14 +575,14 @@ views.comp=function(a){
   if(!a)return"<p>Tambahkan pesawat dulu.</p>";
   const all=D.comp.filter(c=>c.acId===a.id).map(c=>({c,k:ccalc(c,a)}));
   const cnt=s=>all.filter(x=>x.k.st===s).length;
-  const list=all.filter(x=>(!cflt||x.k.st===cflt)&&(!cq||[x.c.name,x.c.pos,x.c.pn,x.c.sn,x.c.note].join(" ").toLowerCase().includes(cq))).sort((x,y)=>x.k.score-y.k.score);
+  const list=all.filter(x=>cfOk(x.k.st)&&(!cq||[x.c.name,x.c.pos,x.c.pn,x.c.sn,x.c.note].join(" ").toLowerCase().includes(cq))).sort((x,y)=>x.k.score-y.k.score);
   const chip=(f,t,n)=>`<button class="sm ${cflt===f?"":"sec"}" data-act="cFlt" data-id="${f}">${t} (${n})</button>`;
   const rows=list.map(({c,k})=>{
     const lim=k.it.map(x=>`<div class="rem ${x.cls}">${esc(x.l)}: sisa ${x.v} ${x.u}<small>Remove due ${esc(x.d)}</small></div>`).join("")||"-";
     const link=/^https?:\/\//.test(c.link||"")?`<small><a href="${esc(c.link)}" target="_blank" rel="noopener">Buka tautan Drive</a></small>`:"";
-    return `<tr class="${k.st==="over"?"hl-over":k.st==="soon"?"hl-soon":""}"><td><b>${esc(c.name)}</b><small>${esc(c.pos||"")}</small></td><td>${esc(c.pn||"-")}<small>S/N ${esc(c.sn||"-")}</small></td><td style="white-space:nowrap">TSN ${n2(k.tsn)}<small style="white-space:nowrap">TSO ${n2(k.tso)}</small><smallstyle="white-space:nowrap">CSN ${k.csn}</small></td><td>${lim}</td><td><span class="badge ${k.st==="out"?"nb":k.st}">${k.st==="out"?"Dilepas":LBL[k.st]}</span></td><td>${filesLinks(c,"comp")}${link}${c.note?`<small>${esc(c.note)}</small>`:""}</td><td>${btn("editC",c.id,"Ubah")} ${btn("attC",c.id,"Referensi")} ${btn("delC",c.id,"Hapus")}</td></tr>`}).join("");
+    return `<tr class="${k.st==="over"?"hl-over":k.st==="soon"?"hl-soon":""}"><td><b>${esc(c.name)}</b><small>${esc(c.pos||"")}</small></td><td>${esc(c.pn||"-")}<small>S/N ${esc(c.sn||"-")}</small></td><td style="white-space:nowrap">TSN ${n2(k.tsn)}<small style="white-space:nowrap">TSO ${n2(k.tso)}</small><small style="white-space:nowrap">CSN ${k.csn}</small></td><td>${lim}</td><td><span class="badge ${k.st==="out"?"nb":k.st}">${k.st==="out"?"Dilepas":LBL[k.st]}</span></td><td>${filesLinks(c,"comp")}${link}${c.note?`<small>${esc(c.note)}</small>`:""}</td><td>${btn("editC",c.id,"Ubah")} ${btn("attC",c.id,"Referensi")} ${btn("delC",c.id,"Hapus")}</td></tr>`}).join("");
   return `<div class="tools"><button data-act="addC">Tambah komponen</button><button class="sec" data-act="impDrive">Impor dari Drive (COMREC)</button><button class="sec" data-act="impXlsx">Impor file Excel</button><button class="sec" data-act="expPdfC">Ekspor PDF</button><button class="sec" data-act="expXlsC">Ekspor Excel</button><input id="cq" type="search" placeholder="Cari komponen, P/N, S/N" aria-label="Cari komponen" value="${esc(cq)}"><select id="cthr" aria-label="Ambang peringatan" style="max-width:230px">${[5,10,20,30].map(p=>`<option value="${p}" ${p===cthr?"selected":""}>Sorot jika sisa ≤ ${p}%</option>`).join("")}</select></div>
-<div class="seg">${chip("","Semua",all.length)}${chip("over","Lewat batas",cnt("over"))}${chip("soon","Mendekati batas",cnt("soon"))}${chip("ok","Aman",cnt("ok"))}${chip("out","Dilepas",cnt("out"))}</div>
+<div class="seg">${chip("","Semua",all.length)}${chip("warn","Perlu perhatian",cnt("over")+cnt("soon"))}${chip("over","Lewat batas",cnt("over"))}${chip("soon","Mendekati batas",cnt("soon"))}${chip("ok","Aman",cnt("ok"))}${chip("out","Dilepas",cnt("out"))}</div>
 <div class="tbl"><table><thead><tr><th style="min-width:240px">Komponen</th><th style="min-width:240px">P/N / S/N</th><th>Umur saat ini</th><th>Time available / remove due</th><th>Status</th><th>Referensi</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="7">${all.length?"Tidak ada komponen yang cocok dengan filter.":"Belum ada catatan komponen untuk "+esc(a.reg)+"."}</td></tr>`}</tbody></table></div>
 <p class="note">Baris kuning: sisa umur sudah di bawah ambang. Baris merah: sudah melewati batas. Rumus: Current TSN/TSO = jam A/C sekarang - jam A/C saat dipasang + TSN/TSO saat dipasang. Remove due = batas - TSN/TSO saat dipasang + jam A/C saat dipasang. Time available = remove due - jam A/C sekarang. Selalu cocokkan dengan catatan resmi dan manual komponen.</p>`;
 };
@@ -704,8 +704,8 @@ $("comrecFile").onchange=async e=>{
   finally{setBusy(false)}
 };
 
-const COMPST={ok:"Aman",soon:"Mendekati batas",over:"Lewat batas",out:"Dilepas"};
-function compList(a){
+const COMPST={ok:"Aman",soon:"Mendekati batas",over:"Lewat batas",out:"Dilepas",warn:"Perlu perhatian (lewat batas + mendekati batas)"}; const cfOk=st=>!cflt||(cflt==="warn"?(st==="over"||st==="soon"):st===cflt);
+function compList(a){   return D.comp.filter(c=>c.acId===a.id).map(c=>({c,k:ccalc(c,a)}))     .filter(x=>cfOk(x.k.st)&&(!cq||[x.c.name,x.c.pos,x.c.pn,x.c.sn,x.c.note].join(" ").toLowerCase().includes(cq)))     .sort((x,y)=>x.k.score-y.k.score); } function compListLama(a){
   return D.comp.filter(c=>c.acId===a.id).map(c=>({c,k:ccalc(c,a)}))
     .filter(x=>(!cflt||x.k.st===cflt)&&(!cq||[x.c.name,x.c.pos,x.c.pn,x.c.sn,x.c.note].join(" ").toLowerCase().includes(cq)))
     .sort((x,y)=>x.k.score-y.k.score);
@@ -1031,7 +1031,7 @@ views.dash=a=>{
     if(b.dataset.go==="menu"){dr.innerHTML=G.map(g=>`<h3>${g[0]}</h3>`+g[1].map(i=>`<button data-t="${i[0]}" class="${i[0]===tab?"":"sec"}">${i[1]}</button>`).join("")).join("")+'<button class="sec" data-t="">Tutup</button>';dr.hidden=false}
     else go(b.dataset.go)};
   dr.onclick=e=>{const b=e.target.closest("button");if(!b)return;dr.hidden=true;if(b.dataset.t==="out")$("logout").click();else if(b.dataset.t)go(b.dataset.t)};
-  $("view").addEventListener("click",e=>{const b=e.target.closest("[data-go],[data-pick]");if(!b)return;if(b.dataset.pick){cur=b.dataset.pick;render()}else go(b.dataset.go)});
+  $("view").addEventListener("click",e=>{const b=e.target.closest("[data-go],[data-pick],[data-comp]");if(!b)return;if(b.dataset.comp){cflt="warn";cq="";cthr=10;go("comp");window.scrollTo(0,0)}else if(b.dataset.pick){cur=b.dataset.pick;render()}else go(b.dataset.go)});
 })();
 </script>
 </body>
