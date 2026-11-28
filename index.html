@@ -1031,7 +1031,7 @@ views.dash=a=>{
     if(b.dataset.go==="menu"){dr.innerHTML=G.map(g=>`<h3>${g[0]}</h3>`+g[1].map(i=>`<button data-t="${i[0]}" class="${i[0]===tab?"":"sec"}">${i[1]}</button>`).join("")).join("")+'<button class="sec" data-t="">Tutup</button>';dr.hidden=false}
     else go(b.dataset.go)};
   dr.onclick=e=>{const b=e.target.closest("button");if(!b)return;dr.hidden=true;if(b.dataset.t==="out")$("logout").click();else if(b.dataset.t)go(b.dataset.t)};
-  $("view").addEventListener("click",e=>{const b=e.target.closest("[data-go],[data-pick],[data-comp]");if(!b)return;if(b.dataset.comp){cflt="warn";cq="";cthr=10;go("comp");window.scrollTo(0,0)}else if(b.dataset.pick){cur=b.dataset.pick;render()}else go(b.dataset.go)});
+  $("view").addEventListener("click",e=>{const dd=e.target.closest(".kv .dd");if(dd&&/Check COMREC/.test(dd.textContent)){cflt="warn";cq="";cthr=10;go("comp");window.scrollTo(0,0);return}const b=e.target.closest("[data-go],[data-pick],[data-comp]");if(!b)return;if(b.dataset.comp){cflt="warn";cq="";cthr=10;go("comp");window.scrollTo(0,0)}else if(b.dataset.pick){cur=b.dataset.pick;render()}else go(b.dataset.go)});
 })();
 </script>
 </body>
